@@ -50,6 +50,7 @@ acs-*.bib
 *.nav
 *.snm
 *.vrb
+*.listing
 
 # cprotect
 *.cpt
