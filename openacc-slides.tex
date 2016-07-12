@@ -1,4 +1,5 @@
-\documentclass[aspectratio=1610]{beamer}
+\documentclass[12pt,aspectratio=169]{beamer}
+
 \usetheme{CSCS}
 
 % define footer text
@@ -38,9 +39,57 @@
 \subsection{Walk away ready (or willing) to start hacking your own code}
 
 \begin{frame}{What is OpenACC?}
+  \begin{itemize}
+  \item Collection of compiler directives for specifying loops and regions to be
+    offloaded from a host CPU to an attached accelerator device
+  \item Host + Accelerator programming model
+  \item High-level representation
+  \end{itemize}
 \end{frame}
 
+\begin{frame}{When to use OpenACC?}
+  \begin{itemize}
+  \item I program in Fortran
+  \item I need portability across different accelerator vendors
+  \item I don't care about the details, I want my science done
+  \item I want to run on accelerators, but I still need a readable code
+  \item I inhereted a large legacy monolithic codebase, which I don't dare to
+    refactor completely, but I need results faster
+  \end{itemize}
+\end{frame}
 
+\begin{frame}{OpenACC is not a silver bullet}
+  \begin{itemize}
+  \item User base is still relatively small but expanding
+    \begin{itemize}
+    \item You may run into compiler bugs or specification ambiguities
+    \end{itemize}
+  \item A high-level representation is not a panacea
+    \begin{itemize}
+    \item You need to adapt to the programming model
+    \end{itemize}
+  \item Be ware of avoiding a \lstinlineCpp{\#pragma}-clutter
+    \begin{itemize}
+    \item Rethink and refactor
+    \end{itemize}
+  \item Does not substitute hand-tuning
+  \end{itemize}
+\end{frame}
+
+% Programming model (data and compute regions)
+% Form of the directives + reduction
+% First hands-on example axpy + reduction
+% Separate data regions and compute regions, Reduction
+% Hands-on blur example (naive + no unnecessary copies)
+% Interoperability with CUDA
+% Hands-on diffusion
+% OpenACC outlook and comparison with OpenMP 4 and 4.5
+
+% Part II -- Porting the miniapp
+% Talk about the structure of the application, especially the Field class
+% Revisit the enter/exit data directives
+% Describe the porting approach step-by-step
+% 1. Field, 2. linalg, 3. operators, 4. rest
 
 % THANK YOU SLIDE
 \cscsthankyou{Thank you for your attention.}
