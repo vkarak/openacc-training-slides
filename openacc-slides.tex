@@ -48,6 +48,8 @@
 \end{frame}
 
 \begin{frame}{When to use OpenACC?}
+  In any of the following cases:
+  \vspace\baselineskip
   \begin{itemize}
   \item I program in Fortran
   \item I need portability across different accelerator vendors
@@ -76,10 +78,163 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Format of directives}
+  \begin{itemize}
+  \item C/C++
+    \begin{itemize}
+    \item \lstinlineCpp{\#pragma acc} \emph{directive-name [clause-list]
+      new-line}
+    \item Scope is the following block of code
+    \end{itemize}
+  \item Fortran
+    \begin{itemize}
+    \item \lstinlineFortran{\!\$acc} \emph{directive-name [clause-list]
+      new-line}
+    \item Scope is the following block of code or until\dots
+    \item \lstinlineFortran{\!\$acc end} \emph{directive-name}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Programming model}
+  \begin{itemize}
+  \item Host-directed execution
+  \item Compute intensive regions are offloaded to attached accelerator devices
+  \item Host orchestrates the execution on the device
+    \begin{itemize}
+    \item Allocations on the device
+    \item Data transfers
+    \item Kernel launches
+    \item Wait for events
+    \item Etc\dots
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Execution model}
+  \begin{itemize}
+  \item The device executes \emph{parallel} or \emph{kernel regions}
+  \item Parallel region
+    \begin{itemize}
+    \item Work-sharing loops
+    \end{itemize}
+  \item Kernel region
+    \begin{itemize}
+    \item Multiple loops to be executed as multiple kernels
+    \end{itemize}
+  \item Levels of parallelim
+    \begin{enumerate}
+    \item \emph{Gang} \onslide<2->{\emph{$\rightarrow$ CUDA block}}
+    \item \emph{Worker} \onslide<2->{\emph{$\rightarrow$ CUDA warp}}
+    \item \emph{Vector} \onslide<2->{\emph{$\rightarrow$ CUDA threads}}
+    \end{enumerate}
+    \begin{itemize}
+    \item Parallelism levels are decided by the compiler but can be fine-tuned by
+      the user
+    \onslide<2->{
+    \alert{\item Mapping to CUDA blocks/warps/threads is implementation defined}
+    }
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Execution model}{Modes of execution}
+  \begin{itemize}
+  \item Gang
+    \begin{itemize}
+    \item Gang-redundant (GR)
+    \item Gang-partioned (GP)
+    \end{itemize}
+  \item Worker
+    \begin{itemize}
+    \item Worker-single (WS)
+    \item Worker-partitioned (WP)
+    \end{itemize}
+  \item Vector
+    \begin{itemize}
+    \item Vector-single (VS)
+    \item Vector-partitioned (VP)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Execution model}{The \lstinlineCpp{kernels} construct}
+  \begin{Fortranlisting}{Multiple loops inside kernels construct}
+!$acc kernels
+    !GR mode
+    do i = 1, N
+        !compiler decides on the partitioning (GP/WP/VP modes)
+        y(i) = y(i) + a*x(i)
+    enddo
+    do i = 1, N
+        !compiler decides on the partitioning (GP/WP/VP modes)
+        y(i) = b*y(i) + a*x(i)
+    enddo
+!$acc end kernels
+  \end{Fortranlisting}
+  \begin{itemize}
+  \item Compiler will try to deduce parallelism
+  \item Loops are launched as different kernels
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Execution model}{The \lstinlineCpp{parallel} construct}
+  \begin{Fortranlisting}{Parallel construct}
+!$acc parallel
+    do i = 1, N
+        ! loop executed in GR mode
+        y(i) = y(i) + a*x(i)
+    enddo
+    !$acc loop
+    do i = 1, N
+        !compiler decides on the partitioning (GP/WP/VP modes)
+        y(i) = b*y(i) + a*x(i)
+    enddo
+!$acc end parallel
+  \end{Fortranlisting}
+  \begin{itemize}
+  \item No automatic parallelism deduction $\rightarrow$ parallel loops must
+    be specified explicitly
+  \item Implicit barrier at the end of \lstinlineCpp{parallel}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Execution model}{Work-sharing loops}
+\end{frame}
+
+\begin{frame}{Memory model}{Where is my data?}
+
+\end{frame}
+
+\begin{frame}{Hands-on}{axpy}
+
+\end{frame}
+
+
+\begin{frame}{Hands-on}{Reduction}
+
+\end{frame}
+
+\begin{frame}{Data management}
+
+\end{frame}
+
+\begin{frame}{Hands-on}{Blur kernel}
+
+\end{frame}
+
+\begin{frame}{Interoperability with CUDA and MPI}
+
+\end{frame}
+
+\begin{frame}{Hands-on}{The diffusion kernel}
+
+\end{frame}
+
 % Programming model (data and compute regions)
 % Form of the directives + reduction
 % First hands-on example axpy + reduction
-% Separate data regions and compute regions, Reduction
+% Separate data regions and compute regions
 % Hands-on blur example (naive + no unnecessary copies)
 % Interoperability with CUDA
 % Hands-on diffusion
