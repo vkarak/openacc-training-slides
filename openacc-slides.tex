@@ -44,6 +44,10 @@
     offloaded from a host CPU to an attached accelerator device
   \item Host + Accelerator programming model
   \item High-level representation
+  \item Current specification version: 2.5
+    \begin{itemize}
+    \item 3.0 is scheduled this fall
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -90,8 +94,7 @@
     \begin{itemize}
     \item \lstinlineFortran{\!\$acc} \emph{directive-name [clause-list]
       new-line}
-    \item Scope is the following block of code or until\dots
-    \item \lstinlineFortran{\!\$acc end} \emph{directive-name}
+    \item Scope is until \lstinlineFortran{\!\$acc end} \emph{directive-name}
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -195,16 +198,199 @@
   \begin{itemize}
   \item No automatic parallelism deduction $\rightarrow$ parallel loops must
     be specified explicitly
-  \item Implicit barrier at the end of \lstinlineCpp{parallel}
+  \item Implicit gang barrier at the end of \lstinlineCpp{parallel}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Execution model}{Work-sharing loops}
+  \begin{itemize}
+  \item C/C++: \lstinlineCpp{\#pragma acc loop}
+    \begin{itemize}
+    \item Applies to the immediately following \lstinlineCpp{for} loop
+    \end{itemize}
+  \item Fortran: \lstinlineFortran{\!\$acc loop}
+    \begin{itemize}
+    \item Applies to the immediately following \lstinlineCpp{do} loop
+    \end{itemize}
+  \item Loop will be automatically striped and assigned to different threads
+    \begin{itemize}
+    \item Use the \lstinlineCpp{independent} clause to force striping
+    \end{itemize}
+  \item Convenience syntax combines
+    \lstinlineCpp{parallel}/\lstinlineCpp{kernels} and \lstinlineCpp{loop}
+    constructs
+    \begin{itemize}
+    \item \lstinlineCpp{\#pragma acc parallel loop}
+    \item \lstinlineCpp{\#pragma acc kernels loop}
+    \item \lstinlineFortran{\!\$acc parallel loop}
+    \item \lstinlineFortran{\!\$acc kernels loop}
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Memory model}{Where is my data?}
+\begin{frame}[fragile]{Execution model}{Controlling parallelism}
+  \begin{itemize}
+  \item Amount of parallelism at the \lstinlineCpp{kernels} and
+    \lstinlineCpp{parallel} level
+    \begin{itemize}
+    \item \lstinlineCpp{num_gangs(...)}, \lstinlineCpp{num_workers(...)},
+      \lstinlineCpp{vector_length(...)}
+    \end{itemize}
+  \item At the \lstinlineCpp{loop} level
+    \begin{itemize}
+    \item \lstinlineCpp{gang}, \lstinlineCpp{worker}, \lstinlineCpp{vector}
+    \end{itemize}
+  \end{itemize}
 
+  \begin{Fortranlisting}{100 thread blocks with 128 threads each}
+!$acc parallel num_gangs(100), vector_length(128)
+    !$acc loop gang, vector
+    do i = 1, n
+        y(i) = y(i) + a*x(i)
+    enddo
+!$acc end parallel
+  \end{Fortranlisting}
+
+  %% Ideally, we want this to overlay with the listing above
+  %% \begin{Fortranlisting}{100 thread blocks with 128 threads each}
+  %%   !$acc parallel loop gang(100), vector(128)
+  %%   do i = 1, n
+  %%       y(i) = y(i) + a*x(i)
+  %%   enddo
+  %% \end{Fortranlisting}
+
+  %% \item Synchronization
+  %%   \begin{itemize}
+  %%   \item Active queues (CUDA streams)
+  %%     \begin{itemize}
+
+  %%     \end{itemize}
+  %%   \item Atomic operations with the \lstinlineFortran{\!\$acc atomic}
+  %%   %% \item No \lstinlineCpp{__syncthreads()} or any kind of global synchronization
+  %%   %%   \begin{itemize}
+  %%   %%   \item Attempt to implement one based on atomics will likely fail
+  %%   %%   \end{itemize}
+  %%   \end{itemize}
 \end{frame}
+
+\begin{frame}[fragile]{Execution model}{Synchronization \& Activity queues}
+  \begin{itemize}
+  \item Atomics
+    \begin{itemize}
+    \item \lstinlineCpp{\#pragma acc atomic} [atomic-clause]
+    \item \lstinlineFortran{\!\$acc atomic} [atomic-clause]
+    \item Atomic clauses: \lstinlineCpp{read}, \lstinlineCpp{write},
+      \lstinlineCpp{update} and \lstinlineCpp{capture}
+    \item Example of ``capturing'' a value:
+      \begin{itemize}
+      \item \lstinlineCpp{v = x++;}
+      \end{itemize}
+    \end{itemize}
+  \item Activity queues (CUDA event queues)
+    \begin{itemize}
+    \item Data copies and kernels are launched synchronously inside the activity
+      queues
+    \item \lstinlineCpp{async} clause $\rightarrow$ pushes operations to
+      an activity queue and host continues execution
+    \item \lstinlineCpp{wait} clause $\rightarrow$ wait for \emph{pending}
+      operations to finish in an activity queue
+    \item \lstinlineCpp{\#pragma acc wait}
+    \end{itemize}
+  \item No \lstinlineCpp{__syncthreads()}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Execution model}{Activity queues example}
+  \begin{Cpplisting}{Launch multiple kernels asynchronously on the GPU}
+// Launch kernel on GPU and continue on CPU
+#pragma acc parallel loop async(1) present(a)
+for(i = 0; i < N; ++i) {
+  a[i] = // ... compute on GPU
+}
+// Launch another kernel on GPU and continue on CPU
+#pragma acc parallel loop async(2) present(b)
+for(j = 0; j < N; ++j) {
+  b[j] = // ... compute on GPU
+}
+// Wait for all kernels to finish
+#pragma acc wait
+  \end{Cpplisting}
+  \begin{itemize}
+  \item Especially useful for overlapping data transfers and execution
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{Where is my data?}
+  \begin{itemize}
+  \item \lstinlineCpp{\#pragma acc data} \emph{[data-clause]}
+    \begin{itemize}
+    \item Scope and lifetime is the immediately following block of code
+    \end{itemize}
+  \item \lstinlineCpp{\#pragma acc enter data} \emph{[data-clause]}
+  \item \lstinlineCpp{\#pragma acc exit data} \emph{[data-clause]}
+  \item Common clauses:
+    \begin{itemize}
+    \item \lstinlineCpp{create(a)}: Allocate array \lstinlineCpp{a} on device
+      (\lstinlineCpp{data} and \lstinlineCpp{enter data} only)
+    \item \lstinlineCpp{copyin(a)}: Copy array \lstinlineCpp{a} to device
+      (\lstinlineCpp{data} and \lstinlineCpp{enter data} only)
+    \item \lstinlineCpp{copyout(a)}: Copy array \lstinlineCpp{a} from device
+      (\lstinlineCpp{data} and \lstinlineCpp{exit data} only)
+    \item \lstinlineCpp{present(a)}: Inform OpenACC runtime that array
+      \lstinlineCpp{a} is on device
+      (\lstinlineCpp{data} only)
+    \item \lstinlineCpp{delete(a)}: Deallocate array \lstinlineCpp{a} from
+      device (\lstinlineCpp{exit data} only)
+    \item \lstinlineCpp{wait}, \lstinlineCpp{async}: \lstinlineCpp{enter data}
+      and \lstinlineCpp{exit data} only
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{Specifying array ranges}
+  \begin{itemize}
+  \item Whole arrays
+    \begin{itemize}
+    \item C/C++: You \emph{must} specify bounds for dynamically allocated arrays
+      \begin{itemize}
+      \item \lstinlineCpp{\#pragma acc data copyin(a[0:n])}
+      \end{itemize}
+    \item Fortran: array shape information is already embedded in the data type
+      \begin{itemize}
+      \item \lstinlineFortran{\!\$acc data copyin(a)}
+      \end{itemize}
+    \end{itemize}
+  \item Array subranges
+    \begin{itemize}
+    \item \lstinlineCpp{\#pragma acc data copyin(a[2:n-2])}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{Deep copy}
+  \begin{Cpplisting}{Deep copy example}
+struct foo {
+    int *array;
+    size_t len;
+};
+foo a[10];
+for (int i = 0; i < 10; ++i) {
+    a.len = 100;
+    a.array = new int[a.len];
+}
+#pragma acc enter data copyin(a[0:10])
+  \end{Cpplisting}
+  \begin{itemize}
+  \item What will be copied over to the device? \onslide<2->{$\rightarrow$ just
+    \lstinlineCpp{a} with dangling \lstinlineCpp{array} pointers :-(}
+  \item What you would like to be copied? \onslide<3->{$\rightarrow$
+    everything, you must wait for OpenACC 3.0}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Combining it all}
+\end{frame}
+
 
 \begin{frame}{Hands-on}{axpy}
 

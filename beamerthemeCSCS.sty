@@ -362,7 +362,13 @@ stringstyle=\lstinstringstyle,
 commentstyle=\lstincommentstyle,
 moredelim=[is][\lstinmoredelimstyle]{@}{@},
 emph={
-        acc, omp, shared, private, reduction, parallel, critical, atomic, kernels
+  omp, shared, private, reduction, parallel, critical, atomic,
+  % acc keywords
+  acc, parallel, kernels, loop, independent, gang, worker, vector,
+  num_gangs, num_workers, vector_length,
+  atomic, read, write, update, capture,
+  data, create, copyin, copyout, present, deviceptr, enter, exit,
+  async, wait
 },
 emphstyle=\lstinemphstyle,
 alsoother={\#},
