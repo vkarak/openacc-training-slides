@@ -36,7 +36,7 @@
 
 \section{Part II}
 \subsection{Port the miniapp to GPU using OpenACC}
-\subsection{Walk away ready (or willing) to start hacking your own code}
+\subsection{Walk away ready to start hacking your own code}
 
 \begin{frame}{What is OpenACC?}
   \begin{itemize}
@@ -250,27 +250,26 @@
     enddo
 !$acc end parallel
   \end{Fortranlisting}
+\end{frame}
 
-  %% Ideally, we want this to overlay with the listing above
-  %% \begin{Fortranlisting}{100 thread blocks with 128 threads each}
-  %%   !$acc parallel loop gang(100), vector(128)
-  %%   do i = 1, n
-  %%       y(i) = y(i) + a*x(i)
-  %%   enddo
-  %% \end{Fortranlisting}
-
-  %% \item Synchronization
-  %%   \begin{itemize}
-  %%   \item Active queues (CUDA streams)
-  %%     \begin{itemize}
-
-  %%     \end{itemize}
-  %%   \item Atomic operations with the \lstinlineFortran{\!\$acc atomic}
-  %%   %% \item No \lstinlineCpp{__syncthreads()} or any kind of global synchronization
-  %%   %%   \begin{itemize}
-  %%   %%   \item Attempt to implement one based on atomics will likely fail
-  %%   %%   \end{itemize}
-  %%   \end{itemize}
+\begin{frame}[fragile]{Execution model}{Calling functions from parallel regions}
+  \begin{itemize}
+  \item \lstinlineCpp{\#pragma acc routine \{gang | worker | vector | seq\}}
+    \begin{itemize}
+    \item Just before the function declaration or definition
+    \end{itemize}
+  \item \lstinlineFortran{\!\$acc routine \{gang | worker | vector | seq\}}
+    \begin{itemize}
+    \item In the specification part of the subroutine
+    \end{itemize}
+  \item Parallelism level of the routine
+    \begin{itemize}
+    \item \lstinlineCpp{gang}: must be called from GR context
+    \item \lstinlineCpp{worker}: must be called from WS context
+    \item \lstinlineCpp{vector}: must be called from VS context
+    \item \lstinlineCpp{seq}: must be called from sequential context
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Execution model}{Synchronization \& Activity queues}
@@ -336,6 +335,8 @@ for(j = 0; j < N; ++j) {
       (\lstinlineCpp{data} and \lstinlineCpp{enter data} only)
     \item \lstinlineCpp{copyout(a)}: Copy array \lstinlineCpp{a} from device
       (\lstinlineCpp{data} and \lstinlineCpp{exit data} only)
+    \item \lstinlineCpp{copy(a)}: Copy array \lstinlineCpp{a} to and from device
+      (\lstinlineCpp{data} only)
     \item \lstinlineCpp{present(a)}: Inform OpenACC runtime that array
       \lstinlineCpp{a} is on device
       (\lstinlineCpp{data} only)
@@ -383,37 +384,126 @@ for (int i = 0; i < 10; ++i) {
   \begin{itemize}
   \item What will be copied over to the device? \onslide<2->{$\rightarrow$ just
     \lstinlineCpp{a} with dangling \lstinlineCpp{array} pointers :-(}
-  \item What you would like to be copied? \onslide<3->{$\rightarrow$
-    everything, you must wait for OpenACC 3.0}
+  \item<3-> What you would like to be copied? $\rightarrow$
+    everything, you must wait for OpenACC 3.0
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Combining it all}
+  \begin{Cpplisting}{Data movement/Activity queues/Parallel loops}
+// prepare array a on host
+#pragma acc enter data async(1) copyin(a[0:N])
+// prepare array b on host
+#pragma acc enter data async(2) copyin(b[0:N])
+#pragma acc parallel loop async(1) present(a[0:N])
+for (i = 0; i < N: ++i)
+    foo(a[i])
+
+#pragma acc exit data copyout(a[0:N]) async(1)
+#pragma acc parallel loop async(2) present(b[0:N])
+for (i = 0; i < N; ++i)
+    bar(b[i])
+#pragma acc exit data copyout(b[0:N]) async(2)
+// some more stuff on the host and then wait for all streams to finish
+#pragma acc wait
+
+  \end{Cpplisting}
 \end{frame}
 
 
-\begin{frame}{Hands-on}{axpy}
-
+\begin{frame}[fragile]{Hands-on}{axpy}
+  \begin{itemize}
+  \item \lstinlineCpp{exercises/openacc/axpy/axpy_openacc.\{cpp,f90\}}
+  \item \lstinlineCpp{grep TODO *.\{cpp,f90,f03\}}
+  \item \lstinlineCpp{module load craype-accel-nvidia35}
+  \item \lstinlineCpp{module switch cce/8.3.12 cce/8.4.6}
+  \item \lstinlineCpp{module switch pgi/15.3.0 pgi/16.3.0}
+  \item \lstinlineCpp{make VERBOSE=1 PGI=1} or \lstinlineCpp{CRAY=1}
+  \end{itemize}
 \end{frame}
-
 
 \begin{frame}{Hands-on}{Reduction}
-
+  \begin{itemize}
+  \item \lstinlineCpp{\#pragma acc parallel reduction(<op>:<var>)}
+    \begin{itemize}
+    \item e.g., \lstinlineCpp{\#pragma acc parallel reduction(+:sum)}
+    \end{itemize}
+  \item \lstinlineCpp{\#pragma acc loop reduction(<op>:<var>)}
+  \item \lstinlineCpp{var} must be scalar
+  \item \lstinlineCpp{var} is copied and default initialized within each gang
+    and/or thread
+  \item Intermediate results from each gang are combined and made available
+    outside the parallel region
+  \item \lstinlineCpp{exercises/openacc/shared/dot_openacc.\{cpp,f90\}}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Data management}
-
+  \begin{itemize}
+  \item Moving data to and from the device is slow ($\approx$7--8\,GB/s per
+    direction)
+  \item Avoid unnecessary data movement
+    \begin{itemize}
+    \item Move needed data to GPU early enough and keep it there as long as
+      possible
+    \item Update host copies using \lstinlineCpp{\#pragma acc update} directive
+      if needed
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Hands-on}{Blur kernel}
+\begin{frame}[fragile]{Hands-on}{Blur kernel}
+  \begin{Cpplisting}{Naive implementation}
+for (auto istep = 0; istep < nsteps; ++istep) {
+    int i;
 
+    #pragma acc parallel loop copyin(in[0:n]) copyout(buffer[0:n])
+    for(i=1; i<n-1; ++i) {
+        buffer[i] = blur(i, in);
+    }
+    #pragma acc parallel loop copyin(buffer[0:n]) copy(out[0:n])
+    for(i=2; i<n-2; ++i) {
+        out[i] = blur(i, buffer);
+    }
+
+    std::swap(in, out);
+}
+  \end{Cpplisting}
 \end{frame}
 
-\begin{frame}{Interoperability with CUDA and MPI}
-
+\begin{frame}[fragile]{Interoperability with MPI and CUDA}
+  \begin{enumerate}
+  \item Call an optimised library function that expects data on the device,
+    e.g., cuBLAS
+  \item Let optimised MPI implementations do RDMA between remote devices' memory
+  \item Manual data management with CUDA, but parallelisation with OpenACC
+    \begin{itemize}
+    \item The safest way to manipulate pointers on the device
+    \end{itemize}
+  \end{enumerate}
+  \onslide<2->{
+    \begin{red2block}{Scenarios (1) and (2)}
+      \lstinlineCpp{\#pragma acc host\_data use\_device(<varlist>)}
+    \end{red2block}
+  }
+  \onslide<3->{
+    \begin{red2block}{Scenario (3)}
+      Use the \lstinlineCpp{deviceptr(<ptrlist>)} clause with
+      \lstinlineCpp{parallel}, \lstinlineCpp{kernels} and \lstinlineCpp{data}
+    \end{red2block}
+  }
 \end{frame}
 
 \begin{frame}{Hands-on}{The diffusion kernel}
+  \begin{itemize}
+  \item \lstinlineCpp{exercises/openacc/diffusion/diffusion_omp.cpp}
+  \item \lstinlineCpp{exercises/openacc/diffusion/diffusion_openacc.\{cpp,f90\}}
+  \item \lstinlineCpp{exercises/openacc/diffusion/diffusion_openacc_mpi.\{cpp,f90\}}
+  \item \lstinlineCpp{-DOPENACC_DATA} $\rightarrow$ data management by OpenACC
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Future prospects}
 
 \end{frame}
 
@@ -433,6 +523,6 @@ for (int i = 0; i < 10; ++i) {
 % 1. Field, 2. linalg, 3. operators, 4. rest
 
 % THANK YOU SLIDE
-\cscsthankyou{Thank you for your attention.}
+% \cscsthankyou{Thank you for your attention.}
 
 \end{document}
