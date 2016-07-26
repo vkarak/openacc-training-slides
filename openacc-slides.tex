@@ -454,7 +454,7 @@ for (i = 0; i < N; ++i)
   \item \lstinlineCpp{grep TODO *.\{cpp,f90,f03\}}
   \item \lstinlineCpp{module load craype-accel-nvidia35}
   \item \lstinlineCpp{module switch cce/8.3.12 cce/8.4.6}
-  \item \lstinlineCpp{module switch pgi/15.3.0 pgi/16.3.0}
+  \item \lstinlineCpp{module switch pgi/15.3.0 pgi/15.9.0}
   \item \lstinlineCpp{make VERBOSE=1 PGI=1} or \lstinlineCpp{CRAY=1}
   \end{itemize}
 \end{frame}
@@ -570,11 +570,53 @@ for (auto istep = 0; istep < nsteps; ++istep) {
     \item One week of intensive development for porting your code to the GPUs
     \item 5 developers + 2 mentors per team
     \item 2$\times$ in USA + 2$\times$ in Europe per year
-    \item Find the one that fits you and apply
+    \item Find the one that fits you and apply!
     \end{itemize}
   \end{itemize}
 \end{frame}
 
-%\part{Part II -- Porting the miniapp to GPUs using OpenACC}
+\part{Porting the miniapp to GPUs using OpenACC}
+
+\begin{frame}[fragile]{General info}
+  \begin{itemize}
+  \item Fortran 90 version
+    \begin{itemize}
+    \item \lstinlineCpp{miniapp/openacc/fortran/}
+    \end{itemize}
+  \item C++11 version
+    \begin{itemize}
+    \item \lstinlineCpp{miniapp/openacc/cxx/}
+    \item Compile with PGI 15.9
+    \end{itemize}
+  \item Interesting files
+    \begin{itemize}
+    \item\lstinlineCpp{main.\{cpp,f90\}}: the solver
+    \item\lstinlineCpp{data.\{h,f90\}}: domain types
+    \item\lstinlineCpp{linalg.\{cpp,f90\}}: linear algebra kernels
+    \item\lstinlineCpp{operators.\{cpp,f90\}}: the diffusion kernel
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Notes for the C++ version}
+  \begin{itemize}
+  \item There are two C++-isms that complicate things:
+    \begin{enumerate}
+    \item Domain data is encapsulated inside the \lstinlineCpp{Field} class
+      \begin{itemize}
+      \item Allocated and initialised inside the constructor
+      \item Deallocated inside the destructor
+      \end{itemize}
+    \item Operators for accessing the domain data
+    \end{enumerate}
+  \item[+] OpenACC provides the \lstinlineCpp{enter data} and \lstinlineCpp{exit
+    data} directives for unscoped data management
+  \item[+] Operators are just another kind of functions
+    \begin{itemize}
+    \item \lstinlineCpp{acc routine} directive is just for that
+    \end{itemize}
+  \item[+] Remember to copy the object itself (\lstinlineCpp{this} pointer)
+  \end{itemize}
+\end{frame}
 
 \end{document}
