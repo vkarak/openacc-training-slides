@@ -228,6 +228,25 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Execution model}{Work-sharing loops -- the \lstinlineCpp{collapse} clause}
+  \begin{Fortranlisting}{Collapse loops}
+!$acc loop collapse(2)
+do i = 1,N
+    do j = 1,N
+        A(i,j) = coeff*B(i,j)
+    enddo
+enddo
+  \end{Fortranlisting}
+  \begin{itemize}
+  \item OpenACC vs.\ OpenMP
+    \begin{itemize}
+    \item OpenACC: apply the \lstinlineCpp{loop} directive to the following $N$
+      loops and possibly collapse their iteration spaces if independent
+    \item OpenMP: Collapse the iteration spaces of the following $N$ loops
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{Execution model}{Controlling parallelism}
   \begin{itemize}
   \item Amount of parallelism at the \lstinlineCpp{kernels} and
@@ -348,7 +367,7 @@ for(j = 0; j < N; ++j) {
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Memory model}{Specifying array ranges}
+\begin{frame}[fragile]{Memory model}{Array ranges and shared memory}
   \begin{itemize}
   \item Whole arrays
     \begin{itemize}
@@ -364,6 +383,10 @@ for(j = 0; j < N; ++j) {
   \item Array subranges
     \begin{itemize}
     \item \lstinlineCpp{\#pragma acc data copyin(a[2:n-2])}
+    \end{itemize}
+  \item Hint that a subarray should reside in the shared memory of the device
+    \begin{itemize}
+    \item \lstinlineCpp{\#pragma acc cache(<varlist>)}
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -410,6 +433,20 @@ for (i = 0; i < N; ++i)
   \end{Cpplisting}
 \end{frame}
 
+\begin{frame}[fragile]{Profiling}
+  \begin{itemize}
+  \item NVIDIA tools (nvprof, nvpp)
+    \begin{itemize}
+    \item \lstinlineCpp{\$ nvprof <openacc-executable>}
+    \end{itemize}
+  \item CrayPAT
+    \begin{itemize}
+    \item \lstinlineCpp{\$ module load perftools-cscs/630openacc}
+    \item Recompile and run
+    \item Report in \lstinlineCpp{.rpt} file
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
 \begin{frame}[fragile]{Hands-on}{axpy}
   \begin{itemize}
@@ -504,25 +541,40 @@ for (auto istep = 0; istep < nsteps; ++istep) {
 \end{frame}
 
 \begin{frame}{Future prospects}
-
+  \begin{itemize}
+  \item OpenACC 3.0 is coming
+    \begin{itemize}
+    \item Deep copy of data structures
+    \item Better semantics for the \lstinlineCpp{reduction} clause
+    \item Math function intrinsics
+    \item Several other smaller scale improvements
+    \end{itemize}
+  \item OpenACC vs.\ OpenMP 4.0 and 4.5
+    \begin{itemize}
+    \item There is no merger envisioned right now
+    \item PGI and NVIDIA are actively supporting OpenACC
+    \item Cray abandons OpenACC development, but will provide support up to
+      OpenACC 2.5
+    \item GCC 5 supports OpenACC 2.0a
+    \item Pathscale supports OpenACC 2.0
+    \item Intel and OpenACC? -- No such thoughts
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
-% Programming model (data and compute regions)
-% Form of the directives + reduction
-% First hands-on example axpy + reduction
-% Separate data regions and compute regions
-% Hands-on blur example (naive + no unnecessary copies)
-% Interoperability with CUDA
-% Hands-on diffusion
-% OpenACC outlook and comparison with OpenMP 4 and 4.5
+\begin{frame}{More information and events}
+  \begin{itemize}
+  \item \url{http://www.openacc.org}
+  \item OpenACC Hackathons
+    \begin{itemize}
+    \item One week of intensive development for porting your code to the GPUs
+    \item 5 developers + 2 mentors per team
+    \item 2$\times$ in USA + 2$\times$ in Europe per year
+    \item Find the one that fits you and apply
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
-% Part II -- Porting the miniapp
-% Talk about the structure of the application, especially the Field class
-% Revisit the enter/exit data directives
-% Describe the porting approach step-by-step
-% 1. Field, 2. linalg, 3. operators, 4. rest
-
-% THANK YOU SLIDE
-% \cscsthankyou{Thank you for your attention.}
+%\part{Part II -- Porting the miniapp to GPUs using OpenACC}
 
 \end{document}
