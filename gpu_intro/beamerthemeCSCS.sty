@@ -179,6 +179,8 @@
   \setbeamertemplate{footline}{}
   \setbeamertemplate{headline}{\cscsheadline}
   \frame{\titlepage}
+  \setbeamertemplate{headline}{}
+  \setbeamertemplate{footline}{\cscsfootline}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,8 +236,6 @@
 }
 
 \newcommand{\cscstableofcontents}[2][]{
-  \setbeamertemplate{headline}{}
-  \setbeamertemplate{footline}{\cscsfootline}
   \begin{frame}{#2}
     \vspace{-\baselineskip}
     \begin{columns}[T]

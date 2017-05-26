@@ -52,7 +52,45 @@
 % TITLE SLIDE
 \cscstitle
 
-\cscstableofcontents{Outline}
+\begin{frame}{Schedule of the course}
+  \renewcommand\arraystretch{1.2}
+  \footnotesize
+  \begin{table}
+    \centering
+    \begin{tabular}{ll}
+      \multicolumn{2}{c}{\em Monday, 29 May} \\\hline\hline
+      10:15--12:15 & Introduction to the GPU architecture and the Piz Daint environment \\
+      13:15--14:45 & Basics of accelerator directive models \\
+      15:15--17:00 & Profiling and debugging \\\hline\hline
+      \multicolumn{2}{c}{\em Tuesday, 30 May} \\\hline\hline
+      09:00--10:30 & Hands-on session 1: Directives basics \\
+      10:45--12:15 & Hands-on session 2: Directives basics (cont'd) \\
+      13:15--14:45 & Hands-on session 3: OpenACC + MPI \\
+      15:15--17:00 & Hands-on session 4: Interoperability with CUDA \\\hline\hline
+      \multicolumn{2}{c}{\em Wednesday, 31 May} \\\hline\hline
+      09:30--10:30 & OpenACC 2.5/2.6 and future roadmap \\
+      10:45--12:15 & Advanced topics (Loop scheduling and asynchronicity)
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+
+\begin{frame}{Overview}
+  \begin{enumerate}
+  \item GPUs in HPC
+    \begin{itemize}
+    \item Clock frequency vs.\ on-node parallelism
+    \item Differences with CPUs
+    \item Challenges for HPC applications
+    \end{itemize}
+    \vspace\baselineskip
+  \item Basics of the GPU architecture
+    \begin{itemize}
+    \item Execution model
+    \item Memory model
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
 
 \part{GPUs in HPC}
 

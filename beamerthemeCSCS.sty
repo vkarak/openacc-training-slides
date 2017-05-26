@@ -18,7 +18,7 @@
 \newlength\@footlineraise
 \newlength\@titleindent
 
-\setlength{\@headerdist}{.5\baselineskip}
+\setlength{\@headerdist}{.2\baselineskip}
 \setlength\@footlineraise{7pt}
 \setlength\@titleindent{-1em}
 
@@ -133,14 +133,14 @@
   \vspace{1em}
   \begin{beamercolorbox}[wd=\paperwidth]{decoration}
     \vspace{\baselineskip}
-    \includegraphics[width=\paperwidth,height=.33\paperheight]{\picturetitle}
+    \includegraphics[width=\paperwidth,height=.3\paperheight]{\picturetitle}
     \vspace{-\baselineskip}
     \color{cscsred}\rule\paperwidth{0.4mm}
   \end{beamercolorbox}
 
   \vspace\@headerdist
   \begin{adjustwidth}{\@titleindent}{\@titleindent}
-    \textbf{\LARGE{\color{cscsgrey}\inserttitle}}\\[2mm]
+    \textbf{\large{\color{cscsgrey}\inserttitle}}\\[2mm]
     {
       \normalsize\color{gray}
       \insertsubtitle \\
@@ -179,6 +179,8 @@
   \setbeamertemplate{footline}{}
   \setbeamertemplate{headline}{\cscsheadline}
   \frame{\titlepage}
+  \setbeamertemplate{headline}{}
+  \setbeamertemplate{footline}{\cscsfootline}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -220,7 +222,7 @@
 % Table of content frame
 \setbeamercolor{section in toc}{fg=black}
 \setbeamertemplate{section in toc}{
-  \textcolor{cscsred}{$\filledsquare$}\hspace{2mm}\inserttocsection\par
+  \textcolor{cscsred}{$\filledsquare$}\hspace{2mm}\inserttocsection\vspace{1em}\par
 }
 
 \setbeamertemplate{subsection in toc}{
@@ -234,15 +236,13 @@
 }
 
 \newcommand{\cscstableofcontents}[2][]{
-  \setbeamertemplate{headline}{}
-  \setbeamertemplate{footline}{\cscsfootline}
   \begin{frame}{#2}
-    \vspace{-5pt}
+    \vspace{-\baselineskip}
     \begin{columns}[T]
-      \begin{column}{.5\textwidth}
-        \includegraphics[width=\textwidth,height=.75\textheight]{cscs_images/image8.jpeg}
+      \begin{column}{.4\textwidth}
+        \includegraphics[width=\textwidth,height=.7\textheight]{cscs_images/image8.jpeg}
       \end{column}
-      \begin{column}{.5\textwidth}
+      \begin{column}{.6\textwidth}
         \vspace{.2cm}
         \tableofcontents[#1]
       \end{column}
@@ -274,7 +274,7 @@
     \vspace\@headerdist
     \begin{adjustwidth}{\@titleindent}{\@titleindent}
       \bfseries
-      \hspace\@titleindent\usebeamerfont{part title}\color{cscsgrey}#1
+      \hspace{1em}\large\color{cscsgrey}#1
     \end{adjustwidth}
   \end{frame}
 }
@@ -343,7 +343,7 @@ stringstyle=\lststringstyle,
 commentstyle=\lstcommentstyle,
 moredelim=[is][\lstmoredelimstyle]{@}{@},
 emph={
-  acc, omp, shared, private, reduction, parallel, critical, atomic, kernels
+        omp, shared, private, reduction, parallel, critical, atomic,
 },
 emphstyle=\lstemphstyle,
 alsoother={\#},
@@ -362,13 +362,7 @@ stringstyle=\lstinstringstyle,
 commentstyle=\lstincommentstyle,
 moredelim=[is][\lstinmoredelimstyle]{@}{@},
 emph={
-  omp, shared, private, reduction, parallel, critical, atomic,
-  % acc keywords
-  acc, parallel, kernels, loop, independent, gang, worker, vector, seq,
-  num_gangs, num_workers, vector_length,
-  atomic, read, write, update, capture,
-  data, create, udpate, copy, copyin, copyout, present, deviceptr, enter, exit,
-  async, wait, routine, host_data, use_device, collapse
+        omp, shared, private, reduction, parallel, critical, atomic,
 },
 emphstyle=\lstinemphstyle,
 alsoother={\#},
