@@ -1,0 +1,126 @@
+\documentclass[aspectratio=169,12pt]{beamer}
+\usetheme{CSCS}
+
+\usepackage[no-math]{fontspec}
+\usepackage{xspace}
+
+\setsansfont{Arial}
+\setmonofont{Courier New}
+\urlstyle{sf}
+
+\graphicspath{{./figs/}}
+
+
+% define footer text
+\newcommand{\footlinetext}{Directive Based GPU Programming: OpenACC and OpenMP}
+
+% Select the image for the title page
+\newcommand{\picturetitle}{cscs_images/image3.pdf}
+%\newcommand{\picturetitle}{cscs_images/image5.pdf}
+%\newcommand{\picturetitle}{cscs_images/image6.pdf}
+
+\lstdefinestyle{cxxstyle}{
+  basicstyle=\scriptsize\ttfamily,
+  keywordstyle=\color{blue},
+  stringstyle=\color{magenta},
+  language=[11]C++,
+  showstringspaces=false,
+  escapechar=\%
+}
+
+\lstdefinestyle{shstyle}{
+  basicstyle=\scriptsize\ttfamily,
+  keywordstyle=\color{blue},
+  stringstyle=\color{magenta},
+  commentstyle=\itshape\color{cscsred},
+  language=bash,
+}
+
+\newcommand\cxxinline[2][]{\lstinline[style=cxxstyle,basicstyle=\ttfamily,#1]!#2!}
+\newcommand\shinline[2][]{\lstinline[style=shstyle,basicstyle=\ttfamily,#1]!#2!}
+
+% Please use the predifined colors:
+% cscsred, cscsgrey, cscsgreen, cscsblue, cscsbrown, cscspurple, cscsyellow, cscsblack, cscswhite
+
+\author{\emph{Vasileios Karakasis, CSCS}}
+\title{Introduction to the GPU architecture}
+\subtitle{Directive Based GPU Programming: OpenACC and OpenMP}
+\date{29--31 May 2017}
+
+\begin{document}
+
+% TITLE SLIDE
+\cscstitle
+
+\begin{frame}[fragile]{Hands-on exercises}{General info}
+  \begin{itemize}
+  \item Available at \url{https://github.com/vkarak/openacc-training}
+    \begin{itemize}
+    \item Clone the repository: \shinline{git clone https://github.com/vkarak/openacc-training.git}
+    \end{itemize}
+  \item \shinline{exercises/} $\rightarrow$ hands-on exercises
+  \item \shinline{solutions/} $\rightarrow$ solutions to exercises (will appear after the course)
+  \item \shinline{slides/} $\rightarrow$ slides of the course
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Hands-on exercises}{How to compile}
+  \begin{itemize}
+  \item Cray compiler
+    \begin{itemize}
+    \item Make sure that \shinline{PrgEnv-cray} module is loaded
+    \item \shinline{module load craype-accel-nvidia60}
+    \item \shinline{make CRAY=1} (default)
+    \end{itemize}
+  \item PGI compiler
+    \begin{itemize}
+    \item Make sure that \shinline{PrgEnv-pgi} module is loaded
+    \item \shinline{module load cudatoolkit}
+    \item \shinline{make PGI=1}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Hands-on exercises}{How to run}
+  \begin{enumerate}
+  \item Source some necessary Slurm presets
+    \begin{itemize}
+    \item \shinline{source <prefix>/tools/course.sh}
+    \end{itemize}
+  \item Launch directly the job from the command line
+    \begin{itemize}
+    \item \shinline{srun -Cgpu -N<nnodes> -n<ntasks> <exec> <args> ...}
+    \item \shinline{OMP\_NUM\_THREADS=<nthreads> srun -Cgpu ...}
+    \end{itemize}
+  \item \dots or use the job submission script provided
+    \begin{itemize}
+    \item \shinline{sbatch job.batch}
+    \item The output is written in \shinline{job.out}
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{2D diffusion example}{Versions}
+  Five versions in both C++/Fortran
+  \vspace\baselineskip
+  \begin{itemize}
+  \item \shinline{diffusion2d.omp}: OpenMP version for the CPU (baseline)
+  \item \shinline{diffusion2d.openacc}: Single-node OpenACC version
+  \item \shinline{diffusion2d.openacc.cuda}: Single-node OpenACC version with memory managed by CUDA
+  \item \shinline{diffusion2d.openacc.mpi}: MPI+OpenACC version
+  \item \shinline{diffusion2d.openacc.cuda.mpi}: MPI+OpenACC version with memory managed by CUDA
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{2D diffusion example}{Goal of the exercise}
+  \begin{itemize}
+  \item Familiarize with data management in OpenACC
+  \item Learn how to interact with CUDA pointers from OpenACC
+  \item Learn how to enable the fast RDMA data path with Cray MPI
+  \end{itemize}
+  \vfill
+  \emph{Plot the result with \shinline{plot.sh} and fill in the performance table in \shinline{performance.txt}}
+
+\end{frame}
+
+\end{document}
