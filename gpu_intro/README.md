@@ -1,0 +1,1 @@
+Simply compile with `make`
