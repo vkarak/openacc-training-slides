@@ -64,6 +64,28 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Hands-on exercises}{General info}
+  \begin{enumerate}
+  \item \shinline{exercises/cray/Himeno}
+    \begin{itemize}
+    \item Himeno benchmark
+    \item Basic directive concepts for accelerators
+    \end{itemize}
+  \item \shinline{exercises/openacc/diffusion}
+    \begin{itemize}
+    \item 2D diffusion example
+    \item Interoperability with MPI and CUDA
+    \end{itemize}
+  \item \shinline{exercises/openacc/gemm}
+    \begin{itemize}
+    \item GEMM
+    \item Interoperability with CUBLAS
+    \end{itemize}
+  \end{enumerate}
+  \vfill
+  Grep for \texttt{TODO} for places to modify
+\end{frame}
+
 \begin{frame}[fragile]{Hands-on exercises}{How to compile}
   \begin{itemize}
   \item Cray compiler
@@ -85,12 +107,12 @@
   \begin{enumerate}
   \item Source some necessary Slurm presets
     \begin{itemize}
-    \item \shinline{source <prefix>/tools/course.sh}
+    \item \texttt{source <prefix>/tools/course.sh}
     \end{itemize}
   \item Launch directly the job from the command line
     \begin{itemize}
-    \item \shinline{srun -Cgpu -N<nnodes> -n<ntasks> <exec> <args> ...}
-    \item \shinline{OMP\_NUM\_THREADS=<nthreads> srun -Cgpu ...}
+    \item \texttt{srun -Cgpu -N<nnodes> -n<ntasks> <exec> <args> ...}
+    \item \texttt{OMP\_NUM\_THREADS=<nthreads> srun -Cgpu ...}
     \end{itemize}
   \item \dots or use the job submission script provided
     \begin{itemize}
@@ -100,7 +122,26 @@
   \end{enumerate}
 \end{frame}
 
-\begin{frame}[fragile]{2D diffusion example}{Versions}
+\begin{frame}[fragile]{2D diffusion example}{Source code}
+  \begin{itemize}
+  \item \shinline{diffusion2d\_omp.\{cpp,f90\}}
+    \begin{itemize}
+    \item Single node OpenMP version for the CPU
+    \end{itemize}
+  \item \shinline{diffusion2d\_openacc.\{cpp,f90\}}
+    \begin{itemize}
+    \item Single node OpenACC version
+    \end{itemize}
+  \item \shinline{diffusion2d\_openacc\_mpi.\{cpp,f90\}}
+    \begin{itemize}
+    \item MPI+OpenACC version
+    \item If \shinline{OPENACC\_DATA} is undefined, data management is performed by CUDA
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{2D diffusion example}{Executables}
   Five versions in both C++/Fortran
   \vspace\baselineskip
   \begin{itemize}
@@ -119,8 +160,20 @@
   \item Learn how to enable the fast RDMA data path with Cray MPI
   \end{itemize}
   \vfill
-  \emph{Plot the result with \shinline{plot.sh} and fill in the performance table in \shinline{performance.txt}}
+  \emph{Plot the result with \shinline{plot.sh} and fill in the performance table in \shinline{performance.text}}
+\end{frame}
 
+\begin{frame}[fragile]{GEMM}
+  \begin{itemize}
+  \item C++ only (apologies to Fortran guys!)
+  \item Versions
+    \begin{itemize}
+    \item Naive: directly from the math textbook (\texttt{make CPPFLAGS=''} to enable)
+    \item Loop reordering with OpenMP on the CPU
+    \item Loop reordering with OpenACC on the GPU
+    \item OpenACC + CUBLAS
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \end{document}
