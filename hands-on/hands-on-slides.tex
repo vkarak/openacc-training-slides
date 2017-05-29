@@ -43,7 +43,7 @@
 % cscsred, cscsgrey, cscsgreen, cscsblue, cscsbrown, cscspurple, cscsyellow, cscsblack, cscswhite
 
 \author{\emph{Vasileios Karakasis, CSCS}}
-\title{Introduction to the GPU architecture}
+\title{Hands-on exercices}
 \subtitle{Directive Based GPU Programming: OpenACC and OpenMP}
 \date{29--31 May 2017}
 
@@ -61,6 +61,9 @@
   \item \shinline{exercises/} $\rightarrow$ hands-on exercises
   \item \shinline{solutions/} $\rightarrow$ solutions to exercises (will appear after the course)
   \item \shinline{slides/} $\rightarrow$ slides of the course
+    \vfill
+  \item Get the latest updates with
+    \shinline{git pull origin master}
   \end{itemize}
 \end{frame}
 
@@ -83,7 +86,7 @@
     \end{itemize}
   \end{enumerate}
   \vfill
-  Grep for \texttt{TODO} for places to modify
+  Search for \texttt{TODO} for places to modify
 \end{frame}
 
 \begin{frame}[fragile]{Hands-on exercises}{How to compile}
@@ -150,6 +153,8 @@
   \item \shinline{diffusion2d.openacc.cuda}: Single-node OpenACC version with memory managed by CUDA
   \item \shinline{diffusion2d.openacc.mpi}: MPI+OpenACC version
   \item \shinline{diffusion2d.openacc.cuda.mpi}: MPI+OpenACC version with memory managed by CUDA
+    \vfill
+  \item Run as \texttt{./<diffusion-exec> <array-dim-pow-2>}
   \end{itemize}
 \end{frame}
 
