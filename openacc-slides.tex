@@ -3,11 +3,10 @@
 \usetheme{CSCS}
 
 % define footer text
-\newcommand{\footlinetext}{CSCS-USI Summer School 2016}
+\newcommand{\footlinetext}{CSCS-USI Summer School 2017}
 
 % Select the image for the title page
 \newcommand{\picturetitle}{cscs_images/image3.pdf}
-
 
 % Please use the predifined colors:
 % cscsred, cscsgrey, cscsgreen, cscsblue, cscsbrown, cscspurple, cscsyellow,
@@ -15,28 +14,29 @@
 
 \author{Vasileios Karakasis, CSCS}
 \title{Introduction to OpenACC}
-\subtitle{Summer School 2016 -- Effective High Performance Computing}
-\date{July 27, 2016}
+\subtitle{Summer School 2017 -- Effective High Performance Computing}
+\date{July 26, 2017}
 
 \begin{document}
 
 % TITLE SLIDE
 \cscstitle
 
-% TABLE OF CONTENT SLIDE
-% All options for table of contents:
-% currentsection, currentsubsection, firstsection=xx, hideallsubsections, hideothersubsections, part=xx, pausesections, pausesubsections, sections=xx, sections={xx-yy}, sections={xx,yy}
-%\cscstableofcontents[hideallsubsections]{Title}
-\cscstableofcontents{Goals of this course}
-
-% Pseudo-structure in order just to get into the TOC
-\section{Part I}
-\subsection{Quick overview of OpenACC}
-\subsection{Deeper understanding of the concepts through hands-on examples}
-
-\section{Part II}
-\subsection{Port the miniapp to GPU using OpenACC}
-\subsection{Walk away ready to start hacking your own code}
+\begin{frame}{Goals of the course}
+  \begin{itemize}
+  \item Part I
+    \begin{itemize}
+    \item Overview of OpenACC
+    \item Deeper understanding of the concepts through hands-on examples
+    \end{itemize}
+    \vspace\baselineskip
+  \item  Part II
+    \begin{itemize}
+    \item Port the miniapp to GPU using OpenACC
+    \item Walk away ready to start hacking your own code
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{What is OpenACC?}
   \begin{itemize}
@@ -46,7 +46,7 @@
   \item High-level representation
   \item Current specification version: 2.5
     \begin{itemize}
-    \item 3.0 is scheduled this fall
+    \item 2.6 is scheduled soon
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -128,14 +128,14 @@
   \item Levels of parallelim
     \begin{enumerate}
     \item \emph{Gang} \onslide<2->{\emph{$\rightarrow$ CUDA block}}
-    \item \emph{Worker} \onslide<2->{\emph{$\rightarrow$ CUDA warp}}
+    \item \emph{Worker} \onslide<2->{\emph{$\rightarrow$ CUDA warp or second dimension of a block}}
     \item \emph{Vector} \onslide<2->{\emph{$\rightarrow$ CUDA threads}}
     \end{enumerate}
     \begin{itemize}
     \item Parallelism levels are decided by the compiler but can be fine-tuned by
       the user
     \onslide<2->{
-    \alert{\item Mapping to CUDA blocks/warps/threads is implementation defined}
+      {\color{cscsred} \item Mapping to CUDA blocks/warps/threads is implementation defined}
     }
     \end{itemize}
   \end{itemize}
@@ -177,7 +177,7 @@
   \end{Fortranlisting}
   \begin{itemize}
   \item Compiler will try to deduce parallelism
-  \item Loops are launched as different kernels
+  \item Loops are launched as different GPU kernels
   \end{itemize}
 \end{frame}
 
@@ -271,6 +271,41 @@ enddo
   \end{Fortranlisting}
 \end{frame}
 
+\begin{frame}[fragile]{Execution model}{Variable scoping}
+  \begin{itemize}
+  \item Allowed in the \lstinlineCpp{parallel} directive only
+  \item By default, if outside of a code block, variables are shared in global memory
+  \item \lstinlineCpp{private}: A copy of the variable is placed in each \emph{gang} (CUDA block)
+  \item \lstinlineCpp{firstprivate}: Same as \lstinlineCpp{private} but initialized from the host value
+  \end{itemize}
+  \pause
+  Implicit scoping:
+  \begin{itemize}
+  \item (C/C++/Fortran) Loop variables are private to the \emph{thread} that executes the loop
+  \item (C/C++ only) Scope of variables declared inside a parallel block depends on the current execution mode:
+    \begin{itemize}
+    \item \emph{Vector-partitioned} mode $\rightarrow$ private to the thread
+    \item \emph{Worker-partitioned, Vector-single} mode $\rightarrow$ private to the worker
+    \item \emph{Worker-single} mode $\rightarrow$ private to the gang
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Execution model}{Reduction operations}
+  \begin{itemize}
+  \item \lstinlineCpp{\#pragma acc parallel reduction(<op>:<var>)}
+    \begin{itemize}
+    \item e.g., \lstinlineCpp{\#pragma acc parallel reduction(+:sum)}
+    \end{itemize}
+  \item \lstinlineCpp{\#pragma acc loop reduction(<op>:<var>)}
+  \item \lstinlineCpp{var} must be scalar
+  \item \lstinlineCpp{var} is copied and default initialized within each gang
+  \item Intermediate results from each gang are combined and made available outside the parallel region
+  \item Complex numbers are also supported
+  \item Operators: \lstinlineCpp{+}, \lstinlineCpp{*}, \lstinlineCpp{max}, \lstinlineCpp{min}, \lstinlineCpp{&}, \lstinlineCpp{|}, \lstinlineCpp{\%}, \lstinlineCpp{&&}, \lstinlineCpp{||}
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{Execution model}{Calling functions from parallel regions}
   \begin{itemize}
   \item \lstinlineCpp{\#pragma acc routine \{gang | worker | vector | seq\}}
@@ -291,9 +326,139 @@ enddo
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Execution model}{Synchronization \& Activity queues}
+\begin{frame}[fragile]{Memory model}{Where is my data?}
   \begin{itemize}
-  \item Atomics
+  \item The host and the device have separate address spaces
+    \begin{itemize}
+    \item Data management between the host and the device is the programmer's responsibility
+    \item You must make sure that all the necessary data for a computation is available on the accelerator before entering the compute region
+    \item You must make sure to transfer the processed data back to the host if needed
+    \end{itemize}
+    \pause
+  \item But there can be some exceptions:
+    \begin{itemize}
+    \item The ``device'' might be the multicore $\rightarrow$ no need for data management
+    \item Some compilers may infer automatically the necessary data transfers
+    \item Nvidia Pascal GPUs provide efficient support for a unified memory view between the host and the accelerator
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{Directives accepting data clauses}
+  Data clauses may appear in the following directives:
+    \vspace\baselineskip
+  \begin{itemize}
+  \item Compute directives:
+    \begin{itemize}
+    \item\lstinlineCpp{#pragma acc kernels}
+    \item\lstinlineCpp{#pragma acc parallel}
+    \end{itemize}
+    \vspace{.5\baselineskip}
+  \item Data directives:
+    \begin{itemize}
+    \item \lstinlineCpp{#pragma acc data}
+    \item \lstinlineCpp{#pragma acc enter data}
+    \item \lstinlineCpp{#pragma acc exit data}
+    \item \lstinlineCpp{#pragma acc declare}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{Data clauses}
+  \begin{itemize}
+  \item \lstinlineCpp{create(a[0:n])}: Allocate array \lstinlineCpp{a} on device
+  \item \lstinlineCpp{copyin(a[0:n])}: Copy array \lstinlineCpp{a} to device
+  \item \lstinlineCpp{copyout(a[0:n])}: Copy array \lstinlineCpp{a} from device
+  \item \lstinlineCpp{copy(a[0:n])}: Copy array \lstinlineCpp{a} to and from device
+  \item \lstinlineCpp{present(a)}: Inform OpenACC runtime that array \lstinlineCpp{a} is on device
+  \item \lstinlineCpp{delete(a)}: Deallocate array \lstinlineCpp{a} from device (\lstinlineCpp{exit data} only)
+%%  \item \lstinlineCpp{wait}, \lstinlineCpp{async}: \lstinlineCpp{enter data} and \lstinlineCpp{exit data} only
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{The \texttt{acc data} directive}
+  \begin{itemize}
+  \item Defines a scoped data region
+    \begin{itemize}
+    \item Data will be copied in at entry of the region and copied out at exit
+    \item A \emph{structural reference count} is associated with each memory region that appears in the data clauses
+    \end{itemize}
+    \vfill
+  \item C/C++: \lstinlineCpp{#pragma acc data} \emph{\texttt{[data clauses]}}
+    \begin{itemize}
+    \item The next block of code is a data region
+    \end{itemize}
+    \vfill
+  \item Fortran: \lstinlineFortran{\!\$acc data} \emph{\texttt{[data clauses]}}
+    \begin{itemize}
+    \item Defines a data region until \lstinlineFortran{\!\$acc end data} is encountered
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{The \texttt{acc enter/exit data} directives}
+  \begin{itemize}
+  \item Defines an unscoped data region
+    \begin{itemize}
+    \item Data will be resident on the device until a corresponding \lstinlineCpp{exit data} directive is found
+    \item Useful for managing data on the device across compilation units
+    \item A \emph{dynamic reference count} is associated with each memory region that appears in the data clauses
+    \end{itemize}
+    \vfill
+  \item C/C++:
+    \begin{itemize}
+    \item \lstinlineCpp{#pragma acc enter data} \emph{\texttt{[data clauses]}}
+    \item\lstinlineCpp{#pragma acc exit data} \emph{\texttt{[data clauses]}}
+    \end{itemize}
+    \vfill
+  \item Fortran:
+    \begin{itemize}
+    \item \lstinlineFortran{\!\$acc enter data} \emph{\texttt{[data clauses]}}
+    \item \lstinlineFortran{\!\$acc exit data} \emph{\texttt{[data clauses]}}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{The \texttt{acc declare} directive}
+  \begin{itemize}
+  \item Functions, subroutines and programs define \emph{implicit data regions}
+  \item The \lstinlineCpp{acc declare} directive is used in variable declarations for making them available on the device during the lifetime of the implicit data region
+  \item Useful for copying global variables to the device
+    \vfill
+  \item C/C++: \lstinlineCpp{#pragma acc declare} \emph{\texttt{[data clauses]}}
+  \item Fortran: \lstinlineFortran{\!\$acc declare} \emph{\texttt{[data clauses]}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Memory model}{Array ranges and shared memory}
+  Data clauses may accept as arguments
+  \begin{itemize}
+  \item Whole arrays
+    \begin{itemize}
+    \item C/C++: You \emph{must} specify bounds for dynamically allocated arrays
+      \begin{itemize}
+      \item \lstinlineCpp{\#pragma acc data copyin(a[0:n])}
+      \item But \lstinlineCpp{\#pragma acc data present(a)} is acceptable: \lstinlineCpp{a}'s bounds can be inferred by the runtime
+      \end{itemize}
+    \item Fortran: array shape information is already embedded in the data type
+      \begin{itemize}
+      \item \lstinlineFortran{\!\$acc data copyin(a)}
+      \end{itemize}
+    \end{itemize}
+  \item Array subranges
+    \begin{itemize}
+    \item \lstinlineCpp{\#pragma acc data copyin(a[2:n-2])}
+    \end{itemize}
+  %% \item Hint that a subarray should reside in the shared memory of the device
+  %%   \begin{itemize}
+  %%   \item \lstinlineCpp{\#pragma acc cache(<varlist>)}
+  %%   \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Advanced topics}{Synchronization primitives}
+  \begin{itemize}
+  \item Atomic operations
     \begin{itemize}
     \item \lstinlineCpp{\#pragma acc atomic} [atomic-clause]
     \item \lstinlineFortran{\!\$acc atomic} [atomic-clause]
@@ -304,21 +469,26 @@ enddo
       \item \lstinlineCpp{v = x++;}
       \end{itemize}
     \end{itemize}
-  \item Activity queues (CUDA event queues)
-    \begin{itemize}
-    \item Data copies and kernels are launched synchronously inside the activity
-      queues
-    \item \lstinlineCpp{async} clause $\rightarrow$ pushes operations to
-      an activity queue and host continues execution
-    \item \lstinlineCpp{wait} clause $\rightarrow$ wait for \emph{pending}
-      operations to finish in an activity queue
-    \item \lstinlineCpp{\#pragma acc wait}
-    \end{itemize}
-  \item No \lstinlineCpp{__syncthreads()}
+  \item No global barriers $\rightarrow$ cannot be implemented due to hardware restrictions
+  \item No equivalent \lstinlineCpp{__syncthreads()}
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Execution model}{Activity queues example}
+\begin{frame}[fragile]{Advanced topics}{Activity queues}
+  \begin{itemize}
+  \item Activity queues are the equivalent of CUDA event queues or streams
+  \item Data copies and kernels are launched \emph{synchronously} inside the activity queues
+  \item Additional clauses in compute or data directives control the activity queues:
+    \begin{itemize}
+    \item \lstinlineCpp{async(<qno>)}: push operations to activity queue \texttt{qno} and continue execution on the host
+    \item \lstinlineCpp{wait(<qno>)}: wait for pending operations in activity queue \texttt{qno} to finish before launching next operation on the device
+    \end{itemize}
+  \item \lstinlineCpp{\#pragma acc wait(<qno>)}: Wait for all events in activity queue \texttt{qno} to finish before continuing execution on the host
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Advanced topics}{Activity queues example}
   \begin{Cpplisting}{Launch multiple kernels asynchronously on the GPU}
 // Launch kernel on GPU and continue on CPU
 #pragma acc parallel loop async(1) present(a)
@@ -338,60 +508,8 @@ for(j = 0; j < N; ++j) {
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Memory model}{Where is my data?}
-  \begin{itemize}
-  \item \lstinlineCpp{\#pragma acc data} \emph{[data-clause]}
-    \begin{itemize}
-    \item Scope and lifetime is the immediately following block of code
-    \end{itemize}
-  \item \lstinlineCpp{\#pragma acc enter data} \emph{[data-clause]}
-  \item \lstinlineCpp{\#pragma acc exit data} \emph{[data-clause]}
-  \item Common clauses:
-    \begin{itemize}
-    \item \lstinlineCpp{create(a)}: Allocate array \lstinlineCpp{a} on device
-      (\lstinlineCpp{data} and \lstinlineCpp{enter data} only)
-    \item \lstinlineCpp{copyin(a)}: Copy array \lstinlineCpp{a} to device
-      (\lstinlineCpp{data} and \lstinlineCpp{enter data} only)
-    \item \lstinlineCpp{copyout(a)}: Copy array \lstinlineCpp{a} from device
-      (\lstinlineCpp{data} and \lstinlineCpp{exit data} only)
-    \item \lstinlineCpp{copy(a)}: Copy array \lstinlineCpp{a} to and from device
-      (\lstinlineCpp{data} only)
-    \item \lstinlineCpp{present(a)}: Inform OpenACC runtime that array
-      \lstinlineCpp{a} is on device
-      (\lstinlineCpp{data} only)
-    \item \lstinlineCpp{delete(a)}: Deallocate array \lstinlineCpp{a} from
-      device (\lstinlineCpp{exit data} only)
-    \item \lstinlineCpp{wait}, \lstinlineCpp{async}: \lstinlineCpp{enter data}
-      and \lstinlineCpp{exit data} only
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Memory model}{Array ranges and shared memory}
-  \begin{itemize}
-  \item Whole arrays
-    \begin{itemize}
-    \item C/C++: You \emph{must} specify bounds for dynamically allocated arrays
-      \begin{itemize}
-      \item \lstinlineCpp{\#pragma acc data copyin(a[0:n])}
-      \end{itemize}
-    \item Fortran: array shape information is already embedded in the data type
-      \begin{itemize}
-      \item \lstinlineFortran{\!\$acc data copyin(a)}
-      \end{itemize}
-    \end{itemize}
-  \item Array subranges
-    \begin{itemize}
-    \item \lstinlineCpp{\#pragma acc data copyin(a[2:n-2])}
-    \end{itemize}
-  \item Hint that a subarray should reside in the shared memory of the device
-    \begin{itemize}
-    \item \lstinlineCpp{\#pragma acc cache(<varlist>)}
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Memory model}{Deep copy}
+\begin{frame}[fragile]{Advanced topics}{Deep copy}
+  \vspace{.5em}
   \begin{Cpplisting}{Deep copy example}
 struct foo {
     int *array;
@@ -409,8 +527,13 @@ for (int i = 0; i < 10; ++i) {
     \lstinlineCpp{a} with dangling \lstinlineCpp{array} pointers :-(}
   \item<3-> What you would like to be copied? $\rightarrow$
     everything, you must wait for OpenACC 3.0
+    \begin{itemize}
+    \item<3->Cray compiler supports deep copy of derived types in Fortran only
+    \item<3->PGI compiler introduced support for manual deep copy
+    \end{itemize}
   \end{itemize}
 \end{frame}
+
 
 \begin{frame}[fragile]{Combining it all}
   \begin{Cpplisting}{Data movement/Activity queues/Parallel loops}
@@ -439,6 +562,7 @@ for (i = 0; i < N; ++i)
     \begin{itemize}
     \item \lstinlineCpp{\$ nvprof <openacc-executable>}
     \end{itemize}
+    \vspace\baselineskip
   \item CrayPAT
     \begin{itemize}
     \item \lstinlineCpp{\$ module load perftools-cscs/630openacc}

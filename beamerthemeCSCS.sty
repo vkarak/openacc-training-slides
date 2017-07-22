@@ -343,7 +343,9 @@ stringstyle=\lststringstyle,
 commentstyle=\lstcommentstyle,
 moredelim=[is][\lstmoredelimstyle]{@}{@},
 emph={
-        omp, shared, private, reduction, parallel, critical, atomic,
+        omp, shared, private, reduction, parallel, kernels, critical, atomic,
+        independent, collapse, acc, routine, firstprivate, data, enter, exit,
+        declare, async, wait
 },
 emphstyle=\lstemphstyle,
 alsoother={\#},
@@ -362,7 +364,9 @@ stringstyle=\lstinstringstyle,
 commentstyle=\lstincommentstyle,
 moredelim=[is][\lstinmoredelimstyle]{@}{@},
 emph={
-        omp, shared, private, reduction, parallel, critical, atomic,
+        omp, shared, private, reduction, parallel, kernels, critical, atomic,
+        independent, collapse, acc, routine, firstprivate, data, enter, exit,
+        declare, async, wait
 },
 emphstyle=\lstinemphstyle,
 alsoother={\#},
