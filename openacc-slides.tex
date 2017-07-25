@@ -498,7 +498,7 @@ enddo
       \end{itemize}
     \end{itemize}
   \item No global barriers $\rightarrow$ cannot be implemented due to hardware restrictions
-  \item No equivalent \lstinlineCpp{__syncthreads()}
+  \item No equivalent of \lstinlineCpp{__syncthreads()}
   \end{itemize}
 \end{frame}
 
@@ -581,7 +581,7 @@ for (int i = 0; i < 10; ++i) {
 // prepare array b on host
 #pragma acc enter data async(2) copyin(b[0:N])
 #pragma acc parallel loop async(1) present(a[0:N])
-for (i = 0; i < N: ++i)
+for (i = 0; i < N; ++i)
     foo(a[i])
 
 #pragma acc exit data copyout(a[0:N]) async(1)
@@ -618,7 +618,6 @@ for (i = 0; i < N; ++i)
   \item Both Cray/PGI compilers are supported, unless otherwise stated
   \item \shinline{source <ssprefix>/scripts/setup.sh} $\rightarrow$ will make available PGI 17.4
   \item \shinline{module load craype-accel-nvidia60}
-  \item \shinline{module switch pgi/16.9.0 pgi/17.4} (after \texttt{PrgEnv-pgi} is loaded)
   \item \shinline{make} or \shinline{make VERBOSE=1} to get compiler information about offloaded regions
   \end{itemize}
 \end{frame}
@@ -711,7 +710,7 @@ for (auto istep = 0; istep < nsteps; ++istep) {
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Hands-on}{Calling CUBLAS methods}
+\begin{frame}[fragile]{Hands-on}{Calling cuBLAS methods}
   Source code:
   \begin{itemize}
   \item \shinline{topics/openacc/practicals/gemm/gemm.cpp}
@@ -721,7 +720,7 @@ for (auto istep = 0; istep < nsteps; ++istep) {
   \begin{enumerate}
   \item Compile with `\shinline{make CPPFLAGS=}' to get also the naive implementation $\rightarrow$ too slow!
   \item Offload the GEMM method to the GPU using OpenACC
-  \item Make use of CUBLAS GEMM through OpenACC
+  \item Make use of cuBLAS GEMM through OpenACC
   \end{enumerate}
 \end{frame}
 
@@ -766,7 +765,7 @@ for (auto istep = 0; istep < nsteps; ++istep) {
     \end{itemize}
   \item GCC
     \begin{itemize}
-    \item Support of OpenACC 2.0a from GCC 5.1
+    \item Support of OpenACC 2.0a from GCC 5.1 onward
     \item Support of OpenACC 2.5 perhaps in GCC 8.0
     \end{itemize}
   \end{itemize}
