@@ -711,6 +711,20 @@ for (auto istep = 0; istep < nsteps; ++istep) {
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Hands-on}{Calling CUBLAS methods}
+  Source code:
+  \begin{itemize}
+  \item \shinline{topics/openacc/practicals/gemm/gemm.cpp}
+  \end{itemize}
+  \vfill
+  Steps:
+  \begin{enumerate}
+  \item Compile with `\shinline{make CPPFLAGS=}' to get also the naive implementation $\rightarrow$ too slow!
+  \item Offload the GEMM method to the GPU using OpenACC
+  \item Make use of CUBLAS GEMM through OpenACC
+  \end{enumerate}
+\end{frame}
+
 
 \begin{frame}[fragile]{Outlook}
   OpenACC 2.6 is due end of the year
@@ -743,6 +757,7 @@ for (auto istep = 0; istep < nsteps; ++istep) {
   \item PGI
     \begin{itemize}
     \item Latest spec support; drives the OpenACC development
+    \item Twice per year a community release
     \end{itemize}
   \item Cray
     \begin{itemize}
