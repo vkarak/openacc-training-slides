@@ -626,7 +626,7 @@ for (i = 0; i < N; ++i)
   \begin{itemize}
   \item Vector scale:
     \begin{itemize}
-    \item \shinline{exercises/openacc/shared/axpy_openacc.\{cpp,f90\}}
+    \item \shinline{topics/openacc/practicals/axpy/axpy_openacc.\{cpp,f90\}}
     \item Run as: \\
       \shinline{srun --reserv=summer -Cgpu ./axpy.openacc [ARRAY\_SIZE]}
     \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
@@ -634,7 +634,7 @@ for (i = 0; i < N; ++i)
     \vfill
   \item Dot product:
     \begin{itemize}
-    \item \shinline{exercises/openacc/shared/dot_openacc.\{cpp,f90\}}
+    \item \shinline{topics/openacc/practicals/shared/dot_openacc.\{cpp,f90\}}
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -803,6 +803,7 @@ for (auto istep = 0; istep < nsteps; ++istep) {
     \item \lstinlineCpp{miniapp/openacc/cxx/}
     \item Compile with PGI 17.4
       \begin{itemize}
+        \item\shinline{module switch PrgEnv-cray PrgEnv-pgi}
         \item\shinline{source <ss-prefix>/scripts/setup.sh}
         \item\shinline{module switch pgi/16.9.0 pgi/17.4}
       \end{itemize}
