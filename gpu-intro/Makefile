@@ -14,13 +14,13 @@ CLEANFILES = $(TARGET_BASE).pdf \
 
 RM = /bin/rm -f
 figs = \
-	cscs_images/image1.eps \
-	cscs_images/image2.eps \
-	cscs_images/image3.eps \
-	cscs_images/image4.eps \
-	cscs_images/image5.eps \
-	cscs_images/image6.eps \
-	cscs_images/image7.eps \
+	cscs_images/eth_logo.eps \
+	cscs_images/cscs_logo.eps \
+	cscs_images/cscs_entrance_painting.eps \
+	cscs_images/cscs_logo_fullname.eps \
+	cscs_images/cscs_machine_room.eps \
+	cscs_images/cscs_external.eps \
+	cscs_images/cscs_entrance_equations.eps \
 	figs/pizdaint_node.eps \
 	figs/transistors_growth.eps \
 	figs/freq_scaling.eps \

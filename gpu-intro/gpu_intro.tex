@@ -12,10 +12,10 @@
 
 
 % define footer text
-\newcommand{\footlinetext}{Directive Based GPU Programming: OpenACC and OpenMP}
+\newcommand{\footlinetext}{Directive Based GPU Programming}
 
 % Select the image for the title page
-\newcommand{\picturetitle}{cscs_images/image3.pdf}
+\newcommand{\picturetitle}{cscs_images/cscs_entrance_painting.pdf}
 %\newcommand{\picturetitle}{cscs_images/image5.pdf}
 %\newcommand{\picturetitle}{cscs_images/image6.pdf}
 
@@ -44,8 +44,8 @@
 
 \author{\emph{Vasileios Karakasis, CSCS}}
 \title{Introduction to the GPU architecture}
-\subtitle{Directive Based GPU Programming: OpenACC and OpenMP}
-\date{29--31 May 2017}
+\subtitle{Directive Based GPU Programming}
+\date{14-15 May 2018}
 
 \begin{document}
 
@@ -53,23 +53,28 @@
 \cscstitle
 
 \begin{frame}{Schedule of the course}
+  \tiny
   \renewcommand\arraystretch{1.2}
-  \footnotesize
   \begin{table}
     \centering
     \begin{tabular}{ll}
-      \multicolumn{2}{c}{\em Monday, 29 May} \\\hline\hline
-      10:15--12:15 & Introduction to the GPU architecture and the Piz Daint environment \\
-      13:15--14:45 & Basics of accelerator directive models \\
-      15:15--17:00 & Profiling and debugging \\\hline\hline
-      \multicolumn{2}{c}{\em Tuesday, 30 May} \\\hline\hline
-      09:00--10:30 & Hands-on session 1: Directives basics \\
-      10:45--12:15 & Hands-on session 2: Directives basics (cont'd) \\
-      13:15--14:45 & Hands-on session 3: OpenACC + MPI \\
-      15:15--17:00 & Hands-on session 4: Interoperability with CUDA \\\hline\hline
-      \multicolumn{2}{c}{\em Wednesday, 31 May} \\\hline\hline
-      09:30--10:30 & OpenACC 2.5/2.6 and future roadmap \\
-      10:45--12:15 & Advanced topics (Loop scheduling and asynchronicity)
+      \multicolumn{2}{c}{\bfseries Monday, 14 May} \\\hline
+      10:15--12:00 & Introduction to the GPU architecture and the Piz Daint environment \\\hline
+      \multicolumn{2}{c}{\tiny LUNCH} \\\hline
+      13:00--14:30 & Introduction to OpenACC \\\hline
+      \multicolumn{2}{c}{\tiny COFFEE} \\\hline
+      15:00--15:30 & Profiling and debugging \\
+      15:30--17:00 & Hands-on session \\\hline
+      \multicolumn{2}{c}{\bfseries Tuesday, 15 May} \\\hline
+      09:15--10:30 & Advanced topics (activity queues) \\\hline
+      \multicolumn{2}{c}{\tiny COFFEE} \\\hline
+      11:00--12:30 & Advanced topics (interoperability with MPI and CUDA, deep copy) \\\hline
+      \multicolumn{2}{c}{\tiny LUNCH} \\\hline
+      13:30--15:00 & Hands-on session \\\hline
+      \multicolumn{2}{c}{\tiny COFFEE} \\\hline
+      15:30--16:00 & Hands-on session \\
+      16:00--16:30 & OpenACC roadmap and success stories \\
+      16:30--16:45 & Closing remarks \\
     \end{tabular}
   \end{table}
 \end{frame}
@@ -95,7 +100,7 @@
 \part{GPUs in HPC}
 
 \begin{frame}{Why GPUs?}
-  There is a trend towards more parallelism node
+  There is a trend towards more parallelism on the computing node
   \vfill
   \begin{itemize}
     \item Multi-core CPUs get more cores and wider vector lanes
@@ -103,6 +108,7 @@
       \item 18-core 2 thread Broadwell processors from Intel
       \item 12-core 8 thread Power8 processors from IBM
       \end{itemize}
+      \vfill
     \item Many-core Accelerators with many highly-specialized cores and high-bandwidth memory
       \begin{itemize}
       \item NVIDIA P100 GPUs with 3582 cores
@@ -143,13 +149,12 @@
   \emph{Transistor density doubles every 18 months.}
 \end{frame}
 
-\begin{frame}{The Power Wall}
+\begin{frame}{The Power Wall}{Frequency stopped scaling according to Moore's Law}
   \begin{figure}
     \centering
     \includegraphics[width=.8\textwidth]{freq_scaling}
   \end{figure}
   \vspace{-.5\baselineskip}\centering
-  $\mathbf{power} \propto \mathbf{frequency}^3$
 \end{frame}
 
 \begin{frame}{The Power Wall}
@@ -161,6 +166,19 @@
    \emph{Floating point performance per core is not keeping up}
 \end{frame}
 
+\begin{frame}{The Power Wall}{Why frequency could not scale?}
+  \begin{enumerate}
+  \item $\mathbf{power} \propto \mathbf{frequency}^3$
+    \begin{itemize}
+    \item Given the transistor shrinking, this was leading to very high power consumption densities!
+    \end{itemize}
+    \vspace\baselineskip
+  \item Very deep pipelines were needed to keep high the instruction throughput
+    \begin{itemize}
+    \item High penalties for branch mispredictions, instruction dependencies and cache misses.
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
 
 \begin{frame}{How to speed up an application}
   There are three ways to increase performance:
@@ -237,7 +255,7 @@
 \begin{frame}{GPUs are throughput devices}
   \begin{itemize}
   \item CPU cores are optimized to minimize latency between operations
-  \item GPUs aim to minimize latency between operations by scheduling multiple warps (thread bundles).
+  \item GPUs aim to minimize latency between operations by scheduling multiple thread bundles (warps)
   \end{itemize}
   \begin{figure}
     \centering
@@ -284,7 +302,7 @@
     \item Multiple lightweight single-threaded cores (64 on P100)
     \item Synchronous execution on groups of 32 threads/cores
       \begin{itemize}
-      \item All 32 cores execute the same instruction
+      \item All 32 threads execute the same instruction
       \end{itemize}
     \item Very large register file partitioned per core (256\,KB)
     \item Warp scheduler
@@ -329,7 +347,7 @@
 \begin{frame}{Execution model}{How this huge parallelism is managed on the GPU?}
   \begin{itemize}
   \item An application launches \emph{kernels} to be executed on the GPU
-  \item Each kernel comprises several \emph{blocks} of threads
+  \item Each kernel comprises several \emph{blocks} or \emph{gangs} of threads
   \item A thread block may only run on a single SM
   \item Multiple thread blocks might be accomodated in a single SM, if\dots
     \begin{itemize}
@@ -339,6 +357,39 @@
     \end{itemize}
   \item Warps of any \emph{active} block may be scheduled to run on the SM cores
   \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Execution model}{How GPU threads are executed on the SMs}
+  \begin{figure}
+    \centering
+    \only<1>{
+      \includegraphics[width=\textwidth]{gpu_block_scheduling_init}
+    }
+    \only<2>{
+      \includegraphics[width=\textwidth]{gpu_block_scheduling}
+    }
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Execution model}{Branching -- Can individual threads execute different code?}
+  \begin{minipage}{.5\textwidth}
+    \begin{figure}
+      \centering
+      \includegraphics[height=.75\textheight]{warp_divergence}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \pause
+  \begin{minipage}{.4\textwidth}
+    \footnotesize
+    \begin{itemize}
+    \item Each thread in a warp can take a different path, but\dots
+      \vspace\baselineskip
+    \item warp is executing all branches, deactivating the non participating threads.
+    \end{itemize}
+  \end{minipage}
 \end{frame}
 
 
@@ -364,34 +415,52 @@
 
 
 \begin{frame}{Memory model}{Memory hierarchy}
-  \begin{enumerate}
+  \begin{itemize}
   \item Global high bandwidth memory (558\,GB/s on P100)
     \begin{itemize}
-    \item Accessible from all SMs
+    \item Accessible from all thread gangs
+    \item Data persistent across kernel invocations
+    \item Memory accesses of warp threads are \emph{coalesced} into one or two
+      memory transactions if they are properly aligned and regular
     \end{itemize}
   \item L1 cache/Shared memory
     \begin{itemize}
-    \item Shared within an SM
-    \item One-cycle access latency (best case)
-    \item User or hardware managed
+    \item Shared among the threads of a single thread gang
+    \item One-cycle access latency, if warp threads access different locations
+    \item Software or hardware managed
     \item No cache coherency across SMs
     \item No sequential consistency $\rightarrow$ enforced by synchronization primitives
     \end{itemize}
-  \item L2 cache
-    \begin{itemize}
-    \item Hardware managed, shared across all SMs
-    \end{itemize}
-  \end{enumerate}
+  \end{itemize}
 \end{frame}
 
+\begin{frame}{Memory model}{Memory hierarchy (cont'd)}
+  \begin{itemize}
+  \item Local memory
+    \begin{itemize}
+    \item Not visible to the programmer
+    \item The compiler may place there automatic variables
+    \end{itemize}
+  \item Constant memory
+    \begin{itemize}
+    \item Cached part of the global memory used for storing constants
+    \item Visible to the programmer
+    \end{itemize}
+  \item Texture and surface memory
+    \begin{itemize}
+    \item Cached part of the global memory optimized for 2D accesses
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{How to program the GPUs?}
   \begin{itemize}
   \item CUDA
     \begin{itemize}
     \item C/C++ language extensions
-    \item Low-level, lots of code
+    \item Low-level, more code
     \item Requires a good understanding of the GPU architecture
+    \item Can leverage every aspect of the architecture to get a fully optimized implementation
     \end{itemize}
     \vspace\baselineskip
   \item Using directives OpenACC/OpenMP

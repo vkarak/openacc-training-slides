@@ -9,6 +9,7 @@
 \RequirePackage{tcolorbox}
 \RequirePackage{listings}
 \RequirePackage{MnSymbol}
+\RequirePackage{xhfill}
 
 \tcbuselibrary{listings,skins}
 \usefonttheme[onlymath]{serif}
@@ -18,7 +19,7 @@
 \newlength\@footlineraise
 \newlength\@titleindent
 
-\setlength{\@headerdist}{.2\baselineskip}
+\setlength{\@headerdist}{.5\baselineskip}
 \setlength\@footlineraise{7pt}
 \setlength\@titleindent{-1em}
 
@@ -130,12 +131,11 @@
 
 % title page with CSCS image
 \setbeamertemplate{title page}{
-  \vspace{1em}
+  \vspace{-\baselineskip}
   \begin{beamercolorbox}[wd=\paperwidth]{decoration}
-    \vspace{\baselineskip}
-    \includegraphics[width=\paperwidth,height=.3\paperheight]{\picturetitle}
-    \vspace{-\baselineskip}
-    \color{cscsred}\rule\paperwidth{0.4mm}
+    \vspace{3\baselineskip}
+    \includegraphics[width=\paperwidth,height=.33\paperheight]{\picturetitle}
+    \color{cscsred}\raisebox{1.1em}{\rule\paperwidth{0.4mm}}
   \end{beamercolorbox}
 
   \vspace\@headerdist
@@ -153,10 +153,10 @@
 \newcommand\cscsheadline{
   \hbox{
     \begin{beamercolorbox}[wd=.5\paperwidth,ht=36pt,left]{headline}
-      \hspace{12pt}\includegraphics[scale=.25]{cscs_images/image4.pdf}
+      \hspace{12pt}\includegraphics[scale=.25]{cscs_images/cscs_logo_fullname.pdf}
     \end{beamercolorbox}
     \begin{beamercolorbox}[wd=.5\paperwidth,ht=36pt,right]{headline}
-      \includegraphics[scale=.29]{cscs_images/image1.pdf}\hspace{18pt}
+      \includegraphics[scale=.29]{cscs_images/eth_logo.pdf}\hspace{18pt}
     \end{beamercolorbox}
   }
 }
@@ -164,13 +164,13 @@
 \newcommand\cscsfootline{
   \hbox{
     \begin{beamercolorbox}[wd=.15\paperwidth,ht=1.1em,dp=\@footlineraise,center]{footline}
-      \includegraphics[scale=.14]{cscs_images/image2.pdf}
+      \includegraphics[scale=.14]{cscs_images/cscs_logo.pdf}
     \end{beamercolorbox}
     \begin{beamercolorbox}[wd=.70\paperwidth,ht=1.1em,dp=\@footlineraise,center]{footline}
       \footlinetext\hspace{1ex}$\mid$\hspace{1ex}\insertframenumber
     \end{beamercolorbox}
     \begin{beamercolorbox}[wd=.15\paperwidth,ht=1.1em,dp=\@footlineraise,center]{footline}
-      \includegraphics[scale=.22]{cscs_images/image1.pdf}
+      \includegraphics[scale=.22]{cscs_images/eth_logo.pdf}
     \end{beamercolorbox}
   }
 }
@@ -208,8 +208,8 @@
 \newcommand{\cscschapter}[1]{
 \begin{frame}[plain]
 \begin{picture}(0,0)
-  \put(-16,71){\includegraphics[scale=.25]{cscs_images/image4.pdf}}
-  \put(285,83){\includegraphics[scale=.29]{cscs_images/image1.pdf}}
+  \put(-16,71){\includegraphics[scale=.25]{cscs_images/cscs_logo_fullname.pdf}}
+  \put(285,83){\includegraphics[scale=.29]{cscs_images/eth_logo.pdf}}
 \end{picture}
 \begin{picture}(0,0)
    \put(-18,-22){\usebeamerfont{part title}\color{cscsgrey}\textbf{#1}}
@@ -240,7 +240,7 @@
     \vspace{-\baselineskip}
     \begin{columns}[T]
       \begin{column}{.4\textwidth}
-        \includegraphics[width=\textwidth,height=.7\textheight]{cscs_images/image8.jpeg}
+        \includegraphics[width=\textwidth,height=.7\textheight]{cscs_images/cscs_external_glass.jpeg}
       \end{column}
       \begin{column}{.6\textwidth}
         \vspace{.2cm}
@@ -267,11 +267,10 @@
   \setbeamertemplate{footline}{}
   \begin{frame}[noframenumbering]
     \begin{beamercolorbox}[wd=\paperwidth]{decoration}
-      \includegraphics[width=\paperwidth,height=.33\paperheight]{cscs_images/image7.pdf}
-      \vspace{-\baselineskip}
-      \color{cscsred}\rule\paperwidth{0.4mm}
+      \includegraphics[width=\paperwidth,height=.33\paperheight]{cscs_images/cscs_entrance_equations.pdf}
+      \color{cscsred}\raisebox{1.1em}{\rule\paperwidth{0.4mm}}
     \end{beamercolorbox}
-    \vspace\@headerdist
+  \vspace\@headerdist
     \begin{adjustwidth}{\@titleindent}{\@titleindent}
       \bfseries
       \hspace{1em}\large\color{cscsgrey}#1
