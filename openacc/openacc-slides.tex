@@ -681,58 +681,77 @@ enddo
   \begin{itemize}
   \item \shinline{grep TODO *.\{cpp,f90,f03\}}
   \item Both Cray/PGI compilers are supported, unless otherwise stated
-  \item \shinline{source <ssprefix>/scripts/setup.sh} $\rightarrow$ will make available PGI 17.4
-  \item \shinline{module load craype-accel-nvidia60}
-  \item \shinline{make} or \shinline{make VERBOSE=1} to get compiler information about offloaded regions
+    \begin{itemize}
+    \item Suggest using PGI for the advanced examples
+    \end{itemize}
+  \item \shinline{source <repodir>/scripts/setup_pgi.sh} $\rightarrow$ will make available PGI 18.4
+  \item \shinline{module load craype-accel-nvidia60} for loading CUDA and set the target architecture to the GPU
+  \item \shinline{make}
+    \begin{itemize}
+    \item For Cray compiler you may use \shinline{make VERBOSE=1} to get diagnostics information
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Hands-on}{The basics}
+\begin{frame}{Hands-on}{Exercise 1 -- AXPY}
   \begin{itemize}
-  \item Vector scale:
+  \item \shinline{practicals/axpy/axpy_openacc.\{cpp,f90\}}
+  \item Run as: \shinline{srun --reserv=openacc -Cgpu ./axpy.openacc [ARRAY\_SIZE]}
     \begin{itemize}
-    \item \shinline{topics/openacc/practicals/axpy/axpy_openacc.\{cpp,f90\}}
-    \item Run as: \\
-      \shinline{srun --reserv=summer -Cgpu ./axpy.openacc [ARRAY\_SIZE]}
     \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
     \end{itemize}
-    \vfill
-  \item Dot product:
-    \begin{itemize}
-    \item \shinline{topics/openacc/practicals/shared/dot_openacc.\{cpp,f90\}}
-    \end{itemize}
+  \item Try with different sizes. Does the GPU outperform the CPU version?
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Data management}
+\begin{frame}{Hands-on}{Exercise 2 -- Dot product}
   \begin{itemize}
-  \item Moving data to and from the device is slow ($\approx$7--8\,GB/s per direction)
-  \item Avoid unnecessary data movement
+  \item \shinline{practicals/basics/dot_openacc.\{cpp,f90\}}
+  \item Run as: \shinline{srun --reserv=openacc -Cgpu ./dot.openacc [ARRAY\_SIZE]}
     \begin{itemize}
-    \item Move needed data to GPU early enough and keep it there as long as possible
+    \item \shinline{ARRAY\_SIZE} is power of 2, default is 2
+    \end{itemize}
+  \item Try with different sizes. Does the GPU outperform the CPU version?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Hands-on}{Exercise 3 -- 1D blur kernel}
+  \begin{figure}
+    \centering
+    \includegraphics[width=.7\textwidth]{blur_twice_kernel}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}{Hands-on}{Exercise 3 -- 1D blur kernel}
+  \begin{itemize}
+  \item \shinline{practicals/basics/blur_openacc.\{cpp,f90\}}
+  \item Run as: \shinline{srun --reserv=openacc -Cgpu ./blur.openacc [ARRAY\_SIZE]}
+    \begin{itemize}
+    \item \shinline{ARRAY\_SIZE} is power of 2, default is 20
+    \end{itemize}
+  \item Offload to GPU the loops of the naive kernel; why is it so slow?
+    \pause
+    \vfill
+  \item Moving data to and from the device is slow ($\approx$7--8\,GB/s per direction)
+  \item Avoid unnecessary data movement in the \texttt{nocopies} kernel
+    \begin{itemize}
+    \item Move the necessary data to GPU early enough and keep it there as long as possible
     \item Update host copies using \lstinlineCpp{\#pragma acc update} directive if needed
     \end{itemize}
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Hands-on}{Blur kernel}
-  \begin{Cpplisting}{Naive implementation}
-for (auto istep = 0; istep < nsteps; ++istep) {
-    int i;
 
-    #pragma acc parallel loop copyin(in[0:n]) copyout(buffer[0:n])
-    for(i=1; i<n-1; ++i) {
-        buffer[i] = blur(i, in);
-    }
-    #pragma acc parallel loop copyin(buffer[0:n]) copy(out[0:n])
-    for(i=2; i<n-2; ++i) {
-        out[i] = blur(i, buffer);
-    }
-
-    std::swap(in, out);
-}
-  \end{Cpplisting}
+\begin{frame}{Hands-on}{Exercise 4 -- Experiment with the unified memory}
+  \begin{itemize}
+  \item Remove all the data directives and data clauses
+  \item Compile the \texttt{blur\_twice\_naive} kernel with \texttt{-Mcuda=managed}
+  \item How does it compare to the manual data management in terms of performance?
+  \item Can you explain the performance difference?
+  \end{itemize}
 \end{frame}
+
 
 \begin{frame}[fragile]{Interoperability with MPI and CUDA}
   \begin{enumerate}
