@@ -1,0 +1,45 @@
+\documentclass[12pt,aspectratio=169]{beamer}
+
+\usetheme{CSCS}
+
+\graphicspath{{./figs/}}
+
+% define footer text
+\newcommand{\footlinetext}{Directive Based GPU Programming course 2018}
+
+% Select the image for the title page
+\newcommand{\picturetitle}{cscs_images/cscs_entrance_painting.pdf}
+
+\lstdefinestyle{shstyle}{
+  basicstyle=\scriptsize\ttfamily,
+  keywordstyle=\color{blue},
+  stringstyle=\color{magenta},
+  commentstyle=\itshape\color{cscsred},
+  language=bash,
+}
+
+\newcommand\shinline[2][]{\lstinline[style=shstyle,basicstyle=\ttfamily,#1]!#2!}
+
+% Please use the predifined colors:
+% cscsred, cscsgrey, cscsgreen, cscsblue, cscsbrown, cscspurple, cscsyellow,
+% cscsblack, cscswhite
+
+\author{\emph{Vasileios Karakasis, CSCS}}
+\title{Introduction to the Piz Daint environment}
+\subtitle{Directive Based GPU Programming}
+\date{May 14--15, 2018}
+
+
+\begin{document}
+
+% TITLE SLIDE
+\cscstitle
+
+\input{intro.tex}
+\input{ssh.tex}
+\input{compile.tex}
+\input{run.tex}
+\input{vim.tex}
+\input{scp.tex}
+
+\end{document}

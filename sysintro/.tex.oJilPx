@@ -1,0 +1,222 @@
+This is XeTeX, Version 3.14159265-2.6-0.99992 (TeX Live 2015/MacPorts 2015_5) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+(./sysinfo.tex
+LaTeX2e <2015/01/01>
+Babel <3.9l> and hyphenation patterns for 44 languages loaded.
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamer.cls
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasercs.sty)
+Document Class: beamer 2015/01/05 3.36 A class for typesetting presentations (r
+cs-revision 8a39122e1f63)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasemodes.sty
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasedecode.sty))
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaseoptions.sty
+(/opt/local/share/texmf-texlive/tex/latex/graphics/keyval.sty))
+(/opt/local/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/opt/local/share/texmf-texlive/tex/generic/ifxetex/ifxetex.sty))
+(/opt/local/share/texmf-texlive/tex/latex/base/size11.clo)
+(/opt/local/share/texmf/tex/latex/pgf/basiclayer/pgfcore.sty
+(/opt/local/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+(/opt/local/share/texmf-texlive/tex/latex/graphics/graphics.sty
+(/opt/local/share/texmf-texlive/tex/latex/graphics/trig.sty)
+(/opt/local/share/texmf-texlive/tex/latex/latexconfig/graphics.cfg)
+(/opt/local/share/texmf-texlive/tex/xelatex/xetex-def/xetex.def)))
+(/opt/local/share/texmf/tex/latex/pgf/systemlayer/pgfsys.sty
+(/opt/local/share/texmf/tex/latex/pgf/utilities/pgfrcs.sty
+(/opt/local/share/texmf/tex/generic/pgf/utilities/pgfutil-common.tex
+(/opt/local/share/texmf/tex/generic/pgf/utilities/pgfutil-common-lists.tex))
+(/opt/local/share/texmf/tex/generic/pgf/utilities/pgfutil-latex.def
+(/opt/local/share/texmf-texlive/tex/latex/ms/everyshi.sty))
+(/opt/local/share/texmf/tex/generic/pgf/utilities/pgfrcs.code.tex))
+(/opt/local/share/texmf/tex/generic/pgf/systemlayer/pgfsys.code.tex
+(/opt/local/share/texmf/tex/generic/pgf/utilities/pgfkeys.code.tex
+(/opt/local/share/texmf/tex/generic/pgf/utilities/pgfkeysfiltered.code.tex))
+(/opt/local/share/texmf/tex/generic/pgf/systemlayer/pgf.cfg)
+(/opt/local/share/texmf/tex/generic/pgf/systemlayer/pgfsys-xetex.def
+(/opt/local/share/texmf/tex/generic/pgf/systemlayer/pgfsys-dvipdfmx.def
+(/opt/local/share/texmf/tex/generic/pgf/systemlayer/pgfsys-common-pdf.def))))
+(/opt/local/share/texmf/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex))
+(/opt/local/share/texmf-texlive/tex/latex/xcolor/xcolor.sty
+(/opt/local/share/texmf-texlive/tex/latex/latexconfig/color.cfg))
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcore.code.tex
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmath.code.tex
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathcalc.code.tex
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathutil.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathparser.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.code.tex
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.basic.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.trigonometric.cod
+e.tex)
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.random.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.comparison.code.t
+ex) (/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.base.code.tex
+) (/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.round.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.misc.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfunctions.integerarithmetic
+s.code.tex)))
+(/opt/local/share/texmf/tex/generic/pgf/math/pgfmathfloat.code.tex))
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorepathconstruct.code.te
+x) (/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorepathusage.code.tex
+) (/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex
+)
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcoretransformations.code.
+tex) (/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorequick.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcoreobjects.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorepathprocessing.code.t
+ex) (/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorearrows.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex))
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcoretransparency.code.tex
+) (/opt/local/share/texmf/tex/generic/pgf/basiclayer/pgfcorepatterns.code.tex))
+) (/opt/local/share/texmf/tex/latex/pgf/utilities/xxcolor.sty)
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/atbegshi.sty
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/infwarerr.sty)
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/ltxcmds.sty))
+(/opt/local/share/texmf-texlive/tex/latex/hyperref/hyperref.sty
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/hobsub-hyperref.sty
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/hobsub-generic.sty))
+(/opt/local/share/texmf-texlive/tex/latex/oberdiek/auxhook.sty)
+(/opt/local/share/texmf-texlive/tex/latex/oberdiek/kvoptions.sty)
+(/opt/local/share/texmf-texlive/tex/latex/hyperref/pd1enc.def)
+(/opt/local/share/texmf-texlive/tex/latex/latexconfig/hyperref.cfg)
+(/opt/local/share/texmf-texlive/tex/latex/url/url.sty)
+
+Package hyperref Message: Stopped early.
+
+)
+
+Package hyperref Message: Driver (autodetected): hxetex.
+
+(/opt/local/share/texmf-texlive/tex/latex/hyperref/hxetex.def
+(/opt/local/share/texmf-texlive/tex/latex/hyperref/puenc.def)
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/stringenc.sty)
+(/opt/local/share/texmf-texlive/tex/latex/oberdiek/rerunfilecheck.sty))
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/se-ascii-print.def)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaserequires.sty
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasecompatibility.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasefont.sty
+(/opt/local/share/texmf-texlive/tex/latex/amsfonts/amssymb.sty
+(/opt/local/share/texmf-texlive/tex/latex/amsfonts/amsfonts.sty))
+(/opt/local/share/texmf-texlive/tex/latex/sansmathaccent/sansmathaccent.sty
+(/opt/local/share/texmf-texlive/tex/latex/filehook/filehook.sty)))
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasetranslator.sty
+(/opt/local/share/texmf-texlive/tex/latex/beamer/translator/translator.sty
+(/opt/local/share/texmf-texlive/tex/latex/beamer/translator/translator-language
+-mappings.tex)))
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasemisc.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasetwoscreens.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaseoverlay.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasetitle.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasesection.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaseframe.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaseverbatim.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaseframesize.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaseframecomponents.sty)
+ (/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasecolor.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasenotes.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasetoc.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasetemplates.sty
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaseauxtemplates.sty
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaseboxes.sty)))
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbaselocalstructure.sty
+(/opt/local/share/texmf-texlive/tex/latex/tools/enumerate.sty))
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasenavigation.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasetheorems.sty
+(/opt/local/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/opt/local/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/opt/local/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/opt/local/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/opt/local/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/opt/local/share/texmf-texlive/tex/latex/amscls/amsthm.sty))
+(/opt/local/share/texmf-texlive/tex/latex/beamer/beamerbasethemes.sty))
+(/opt/local/share/texmf-texlive/tex/latex/beamer/themes/theme/beamerthemedefaul
+t.sty
+(/opt/local/share/texmf-texlive/tex/latex/beamer/themes/font/beamerfontthemedef
+ault.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/themes/color/beamercolorthemed
+efault.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/themes/inner/beamerinnerthemed
+efault.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/themes/outer/beamerouterthemed
+efault.sty))) (./beamerthemeCSCS.sty
+(/opt/local/share/texmf-texlive/tex/latex/base/ifthen.sty)
+(/opt/local/share/texmf-texlive/tex/latex/psnfss/helvet.sty)
+(/opt/local/share/texmf-texlive/tex/latex/tcolorbox/tcolorbox.sty
+(/opt/local/share/texmf/tex/latex/pgf/basiclayer/pgf.sty
+(/opt/local/share/texmf/tex/generic/pgf/modules/pgfmoduleshapes.code.tex)
+(/opt/local/share/texmf/tex/generic/pgf/modules/pgfmoduleplot.code.tex)
+(/opt/local/share/texmf/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty)
+(/opt/local/share/texmf/tex/latex/pgf/compatibility/pgfcomp-version-1-18.sty))
+(/opt/local/share/texmf-texlive/tex/latex/tools/verbatim.sty)
+(/opt/local/share/texmf-texlive/tex/latex/environ/environ.sty
+(/opt/local/share/texmf-texlive/tex/latex/trimspaces/trimspaces.sty))
+(/opt/local/share/texmf-texlive/tex/latex/etoolbox/etoolbox.sty)))
+(/opt/local/share/texmf-texlive/tex/latex/listings/listings.sty
+(/opt/local/share/texmf-texlive/tex/latex/listings/lstmisc.sty)
+(/opt/local/share/texmf-texlive/tex/latex/listings/listings.cfg))
+(/opt/local/share/texmf-texlive/tex/latex/anyfontsize/anyfontsize.sty)
+(/opt/local/share/texmf-texlive/tex/latex/tools/xspace.sty)
+(/opt/local/share/texmf-texlive/tex/latex/tools/multicol.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/themes/font/beamerfontthemepro
+fessionalfonts.sty)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/themes/font/beamerfontthemeser
+if.sty) (/opt/local/share/texmf-texlive/tex/latex/listings/lstlang1.sty)
+(/opt/local/share/texmf-texlive/tex/latex/listings/lstlang1.sty)
+(/opt/local/share/texmf-texlive/tex/latex/listings/lstlang1.sty)
+(/opt/local/share/texmf-texlive/tex/latex/listings/lstmisc.sty) (./sysinfo.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+ABD: EveryShipout initializing macros
+(/opt/local/share/texmf-texlive/tex/latex/hyperref/nameref.sty
+(/opt/local/share/texmf-texlive/tex/generic/oberdiek/gettitlestring.sty))
+(./sysinfo.out) (./sysinfo.out)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/translator/dicts/translator-ba
+sic-dictionary/translator-basic-dictionary-English.dict)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/translator/dicts/translator-bi
+bliography-dictionary/translator-bibliography-dictionary-English.dict)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/translator/dicts/translator-en
+vironment-dictionary/translator-environment-dictionary-English.dict)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/translator/dicts/translator-mo
+nths-dictionary/translator-months-dictionary-English.dict)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/translator/dicts/translator-nu
+mbers-dictionary/translator-numbers-dictionary-English.dict)
+(/opt/local/share/texmf-texlive/tex/latex/beamer/translator/dicts/translator-th
+eorem-dictionary/translator-theorem-dictionary-English.dict) (./sysinfo.nav)
+<use  "cscs_images/image2.pdf" >
+(/opt/local/share/texmf-texlive/tex/latex/amsfonts/umsa.fd)
+(/opt/local/share/texmf-texlive/tex/latex/amsfonts/umsb.fd)
+<use  "cscs_images/image1.pdf" > <use  "cscs_images/image4.pdf" >
+<use  "cscs_images/image1.pdf" > <use  "cscs_images/image5.pdf" > [1]
+(./intro.tex (./sysinfo.vrb) <use  "cscs_images/image2.pdf" >
+<use  "cscs_images/image1.pdf" > [2]) (./ssh.tex
+<use  "cscs_images/image4.pdf" > <use  "cscs_images/image1.pdf" > [3]
+(./sysinfo.vrb) <use  "cscs_images/image2.pdf" >
+<use  "cscs_images/image1.pdf" > [4]) (./compile.tex
+<use  "cscs_images/image4.pdf" > <use  "cscs_images/image1.pdf" > [5]
+(./sysinfo.vrb) <use  "cscs_images/image2.pdf" >
+<use  "cscs_images/image1.pdf" > [6] (./sysinfo.vrb
+(/opt/local/share/texmf-texlive/tex/latex/listings/lstlang1.sty)
+(/opt/local/share/texmf-texlive/tex/latex/listings/lstlang1.sty))
+<use  "cscs_images/image2.pdf" > <use  "cscs_images/image1.pdf" > [7]
+(./sysinfo.vrb) <use  "cscs_images/image2.pdf" >
+<use  "cscs_images/image1.pdf" > [8] (./sysinfo.vrb)
+<use  "cscs_images/image2.pdf" > <use  "cscs_images/image1.pdf" > [9]
+(./sysinfo.vrb) <use  "cscs_images/image2.pdf" >
+<use  "cscs_images/image1.pdf" > [10] (./sysinfo.vrb)
+<use  "cscs_images/image2.pdf" > <use  "cscs_images/image1.pdf" > [11]
+(./sysinfo.vrb) <use  "cscs_images/image2.pdf" >
+<use  "cscs_images/image1.pdf" > [12]) (./run.tex
+<use  "cscs_images/image4.pdf" > <use  "cscs_images/image1.pdf" > [13]
+(./sysinfo.vrb
+! Undefined control sequence.
+l.4 ...ob submission system used at CSCS is \empth
+                                                  {native SLURM}
+? 

@@ -5,7 +5,7 @@
 \graphicspath{{./figs/}}
 
 % define footer text
-\newcommand{\footlinetext}{CSCS-USI Summer School 2017}
+\newcommand{\footlinetext}{Directive Based GPU Programming course 2018}
 
 % Select the image for the title page
 \newcommand{\picturetitle}{cscs_images/cscs_entrance_painting.pdf}
@@ -27,7 +27,7 @@
 \author{\emph{Vasileios Karakasis, CSCS}}
 \title{Introduction to OpenACC}
 \subtitle{Directive Based GPU Programming}
-\date{May 14-15, 2018}
+\date{May 14--15, 2018}
 
 \begin{document}
 
@@ -676,6 +676,21 @@ enddo
 %%     \end{itemize}
 %%   \end{itemize}
 %% \end{frame}
+
+\begin{frame}[fragile]{Hands-on exercises}{General information}
+  The initial course material is available on Github and it will be update during the course:
+  \begin{itemize}
+  \item \shinline{git clone https://github.com/vkarak/openacc-training.git}
+  \end{itemize}
+  \vfill
+  Directory structure:
+  \begin{itemize}
+  \item \texttt{practicals/}: The hands-on exercises
+  \item \texttt{scripts/}: Set up scripts to make your life easier
+  \item \texttt{slides/}: Slides of the course
+  \item \texttt{ci/}: Continuous integration tests for the exercises (ask me offline if interested)
+  \end{itemize}
+\end{frame}
 
 \begin{frame}[fragile]{Hands-on exercises}{General information}
   \begin{itemize}

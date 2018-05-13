@@ -1,0 +1,60 @@
+\begin{frame}{Piz Daint}{Computing nodes}
+  Piz Daint is a hybrid cluster of Cray XC40/XC50 nodes
+  \begin{itemize}
+  \item Hybrid nodes (XC50)
+    \begin{itemize}
+    \item 5320 total
+    \item Intel\textregistered\ Xeon\textregistered\ E5-2690 v3 @ 2.60GHz (12 cores, 64GB RAM, Haswell)
+    \item NVIDIA\textregistered\ Tesla\textregistered\ P100 16GB (Pascal)
+    \end{itemize}
+  \item Multicore nodes
+    \begin{itemize}
+    \item 1813 nodes
+    \item Two Intel\textregistered\ Xeon\textregistered E5-2695 v4 @ 2.10GHz (2 x 18 cores, 64/128 GB RAM, Broadwell)
+    \end{itemize}
+  \item Login nodes
+    \begin{itemize}
+    \item 5 total
+    \item Intel\textregistered\ Xeon\textregistered CPU E5-2650 v3 @ 2.30GHz (10 cores, 256 GB RAM, Haswell)
+    \end{itemize}
+  \item Aries routing and communications ASIC, and Dragonfly network topology
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Piz Daint}{Filesystems}
+  \begin{itemize}
+  \item \texttt{/scratch}: High performance Lustre filesystem accessible from the computing nodes
+    \begin{itemize}
+    \item Environment variable \shinline{$SCRATCH} points to it
+    \item Total capacity: 6.2\,PB
+    \item Must be used for heavy I/O
+    \end{itemize}
+  \item \texttt{/users}: GPFS filesystem for the users' homes
+  \item \texttt{/project}, \texttt{/store}: Long-term storage for computational projects
+  \end{itemize}
+  \vfill
+  More on \url{https://user.cscs.ch/storage/file_systems/}
+\end{frame}
+
+\begin{frame}[fragile]{Accessing Piz Daint}
+  \begin{itemize}
+  \item Accessible through SSH
+  \item Piz Daint is not directly accessible from the outside world:
+    \begin{itemize}
+    \item \texttt{ela} $\rightarrow$ \texttt{daint10x} $\rightarrow$ \texttt{nidxxxxx}
+    \end{itemize}
+  \end{itemize}
+
+  Two-steps process:
+  \begin{enumerate}
+  \item Login to the frontend, forwarding X11 (will be needed the second day)
+  \item Move to the login nodes of Piz Daint
+  \end{enumerate}
+
+  \vfill
+  \begin{lstlisting}[style=shstyle]
+# Login to the frontend first
+ssh -Y courseXX@ela.cscs.ch
+ssh -Y daint
+  \end{lstlisting}
+\end{frame}

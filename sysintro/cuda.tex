@@ -1,0 +1,82 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cscschapter{Running the code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%  ####   #    #  #####     ##
+% #    #  #    #  #    #   #  #
+% #       #    #  #    #  #    #
+% #       #    #  #    #  ######
+% #    #  #    #  #    #  #    #
+%  ####    ####   #####   #    #
+\begin{frame}[fragile]{PrgEnv-Cray: CUDA (1)}
+
+%.........
+\begin{info}{Setup}
+\begin{itemize}
+ \item module load      \lst{craype-accel-nvidia35} \lst{libsci\* for CCE only \!}
+ \item \$CRAY\_ACCEL\_TARGET = \lst{nvidia35}
+ \item \$CUDATOOLKIT\_HOME = \lst{ Not set } / export ... 
+ \item craype-accel-nvidia35 = \lst{ Not set } / add -arch=sm\_37 
+\end{itemize}
+\end{info}
+%.........
+
+%.........
+\begin{info}{Compile}
+\begin{itemize}
+ \item cc -c mpic.c ; nvcc \lst{-arch=sm\_37} -c mpicu.cu
+ \item \lst{CC} mpic.o mpicu.o -o CRAY.MGMT 
+ \item undefined reference to \lst{'\_\_gxx\_personality\_v0'} with cc (use \lst{CC})
+\end{itemize}
+\end{info}
+%.........
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Running the code: the compute node}
+%.........
+\begin{info}{Run}
+\begin{itemize}
+ \item LD\_LIBRARY\_PATH=/opt/local/slurm/default/lib64:\$...
+\end{itemize}
+\end{info}
+%.........
+
+%.........
+\begin{code}{srun -n1 CRAY.MGMT}
+\begin{lstlisting}[style=boxcudatiny]
+=== get_gpu_info ===
+Process 0 on prod-0001 out of 1 Device 0 (Tesla K80)
+
+=== /proc/driver/nvidia/version ===
+NVRM version: NVIDIA UNIX x86_64 Kernel Module  340.87
+
+=== cudaGetDeviceProperties ===
+Device 0: "Tesla K80"
+  CUDA Driver Version / Runtime Version     6.5 / 6.5
+  CUDA Capability Major/Minor version number:    3.7
+
+srun -n1 cat /proc/cpuinfo      (HASWELL)
+        processor  : 0-23
+        model name : Intel(R) Xeon(R) CPU E5-2690 v3 @ 2.60GHz 
+
+srun -n1 cat /proc/meminfo      (256G)
+        MemTotal:       264572408 kB
+\end{lstlisting}
+\end{code}
+%.........
+
+%.........
+\begin{code}{PizDaint}
+\begin{lstlisting}[style=boxcudatiny]
+Runtime Version = 6.5 / Capability = 3.5 / Driver = 340.87
+\end{lstlisting}
+\end{code}
+%.........
+
+\end{frame}
+
+
+
+

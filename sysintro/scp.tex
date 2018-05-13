@@ -1,0 +1,18 @@
+\begin{frame}{Moving data to/from CSCS}
+  \begin{itemize}
+  \item \texttt{scp}: Remote copy over SSH
+    \begin{itemize}
+    \item Getting a file: \shinline{scp course00@ela.cscs.ch:remotefile localfile}
+    \item Getting a directory: \shinline{scp -r course00@ela.cscs.ch:remotedir localdir}
+    \item Sending a file: \shinline{scp localfile course00@ela.cscs.ch:remotefile}
+    \item Sending a directory: \shinline{scp localdir course00@ela.cscs.ch:remotedir}
+    \end{itemize}
+  \item \texttt{rsync}: Synchronize files remotely over SSH
+    \begin{itemize}
+    \item \shinline{rsync -avz course00@ela.cscs.ch:remotedir/ localdir/}
+    \item \shinline{rsync -avz localdir/ course00@ela.cscs.ch:remotedir/}
+    \item Pay attention to the slashes! \emph{\shinline{rsync} behaves differently
+      with or without slashes.}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
