@@ -769,29 +769,175 @@ enddo
 \end{frame}
 
 
-\begin{frame}[fragile]{Interoperability with MPI and CUDA}
-  \begin{enumerate}
-  \item Call an optimised library function that expects data on the device, e.g., cuBLAS
-  \item Let optimised MPI implementations do RDMA between remote devices' memory
-  \item Manual data management with CUDA, but parallelisation with OpenACC
-    \begin{itemize}
-    \item The safest way to manipulate pointers on the device
-    \end{itemize}
-  \end{enumerate}
-  \onslide<2->{
-    \begin{red2block}{Scenarios (1) and (2)}
-      \lstinlineCpp{\#pragma acc host\_data use\_device(<varlist>)}
-    \end{red2block}
-  }
-  \onslide<3->{
-    \begin{red2block}{Scenario (3)}
-      Use the \lstinlineCpp{deviceptr(<ptrlist>)} clause with
-      \lstinlineCpp{parallel}, \lstinlineCpp{kernels} and \lstinlineCpp{data}
-    \end{red2block}
-  }
+\begin{frame}{Interoperability with CUDA}
+  \large
+  \begin{itemize}
+  \item Can I use a CUDA pointer inside OpenACC context?
+    \vspace\baselineskip
+  \item Can I call a CUDA function from OpenACC context?
+  \end{itemize}
+  \vfill
+  Short answer is \emph{yes}.
 \end{frame}
 
-\begin{frame}[fragile]{Hands-on}{2D diffusion example}
+\begin{frame}{Interoperability with CUDA}{Use CUDA pointers inside OpenACC context}
+  A scenario:
+  \begin{itemize}
+  \item Have a CUDA code that needs to call a function that uses OpenACC.
+  \item This function may accept an array that has been allocated already on the GPU by CUDA.
+  \end{itemize}
+  \vfill
+  The problem?
+  \begin{itemize}
+  \item OpenACC only knows of pointers that it is managing itself; the \texttt{present} clause won't work. No idea what this pointer is; never seen it before!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Interoperability with CUDA}{Use CUDA pointers inside OpenACC context}
+  Solution:
+  \vspace\baselineskip
+  \begin{itemize}
+  \item We need to instruct the OpenACC runtime to trust this pointer and that it is a valid device pointer.
+  \item OpenACC runtime will just treat that pointer as known, but it won't check its shape.
+  \item Use the \lstinlineCpp{deviceptr(<ptrlist>)} clause with
+    \lstinlineCpp{parallel}, \lstinlineCpp{kernels} and \lstinlineCpp{data} directives
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Interoperability with CUDA}{Use CUDA pointers inside OpenACC context -- Example}
+  \begin{lstlisting}[style=CppStyle]
+void copy(double *dst, const double *src, size_t n) {
+  #pragma acc parallel loop deviceptr(dst, src)
+  for (size_t i = 0; i < n; ++i) {
+    dst[i] = src[i];
+  }
+}
+
+int main() {
+  double *a, *b;
+  cudaMalloc(&a, 1024);
+  cudaMalloc(&b, 1024);
+  ...
+  copy(b, a, 1024);
+  return 0;
+}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Interoperability with CUDA}{Call a CUDA function from OpenACC context}
+  Scenario:
+  \begin{itemize}
+  \item My code is in OpenACC, but I need to call an optimized library written in CUDA, which accepts device pointers, e.g., cuBLAS.
+  \end{itemize}
+  \pause
+  Problem:
+  \begin{itemize}
+  \item I only ``see'' device pointers while in a parallel region, but I want to get a device pointer, while executing on the host.
+  \end{itemize}
+  \pause
+  Solution:
+  \begin{itemize}
+  \item Use a \lstinlineCpp{host_data} region
+    \begin{itemize}
+    \item \lstinlineCpp{#pragma acc host_data use_device(<varlist>)}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Interoperability with CUDA}{The \texttt{host\_data} directive}
+  \begin{itemize}
+  \item C/C++: \lstinlineCpp{#pragma acc host_data use_device(<varlist>)}
+    \begin{itemize}
+    \item In the next block of code the compiler will make available the device address of any variable in \texttt{<varlist>}.
+    \end{itemize}
+  \item Fortran: \lstinlineFortran{\!\$acc host_data use_device(<varlist>)}
+    \begin{itemize}
+    \item The compiler will make available the device address of any variable in \texttt{<varlist>} until a matching \lstinlineFortran{\!\$acc end host_data} is found.
+    \end{itemize}
+  \item Optional clauses:
+    \begin{itemize}
+    \item \texttt{if(\emph{condition})}: Use the device pointer if \texttt{\emph{condition}} is true.
+    \item \texttt{if\_present}: Use the device pointer if variables in \texttt{<varlist>} are present on the device.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Interoperability with MPI}{The communication data path}
+  \begin{figure}
+    \centering
+    \only<1>{
+      \includegraphics[height=.7\textheight]{rdma_unoptimized_initstate}
+    }
+    \only<2>{
+      \includegraphics[height=.7\textheight]{rdma_unoptimized_update_host}
+    }
+    \only<3>{
+      \includegraphics[height=.7\textheight]{rdma_unoptimized_mpi_copy}
+    }
+    \only<4>{
+      \includegraphics[height=.7\textheight]{rdma_unoptimized_nic_copy}
+    }
+    \only<5>{
+      \includegraphics[height=.7\textheight]{rdma_unoptimized_recv}
+    }
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Interoperability with MPI}{The communication data path}
+  \begin{itemize}
+  \item Aren't there too many copies?
+  \item This path is not fully unoptimized though! It still bypasses a copy by enabling RDMA between the NICs.
+  \end{itemize}
+  \pause
+  \vfill
+  Ideally, we would like to avoid all these copies and have the GPU talk directly to the NIC.
+  \begin{itemize}
+  \item Answer: GPUDirect
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Interoperability with MPI}{The GPUDirect optimized RDMA path}
+  \begin{figure}
+    \centering
+    \includegraphics[height=.7\textheight]{rdma_gpudirect}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Interoperability with MPI}{How to enable this optimized path with OpenACC}
+  \begin{itemize}
+  \item The MPI implementation \emph{must} support it! Cray MPICH implementation does.
+    \begin{itemize}
+    \item Enabled by setting \shinline{MPICH_RDMA_ENABLED_CUDA=1}.
+    \end{itemize}
+    \vspace\baselineskip
+  \item If a GPU pointer passed in Send/Recv call, the MPI implementation enables the optimized GPUDirect data path.
+    \pause
+    \vspace\baselineskip
+  \item Wrap the Send/Recv calls using the \lstinlineCpp{host_data} directive to get the OpenACC device pointers.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Hands-on}{Exercise 5 -- Calling cuBLAS methods}
+  Source code:
+  \begin{itemize}
+  \item \shinline{practicals/gemm/gemm.cpp}
+  \item Run as: \shinline{srun --reserv=openacc -Cgpu ./axpy.openacc [ARRAY\_SIZE]}
+    \begin{itemize}
+    \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
+    \end{itemize}
+  \end{itemize}
+  \vfill
+  Steps:
+  \begin{enumerate}
+  \item Compile with `\shinline{make CPPFLAGS=}' to get also the naive implementation $\rightarrow$ too slow!
+  \item Offload the GEMM method to the GPU using OpenACC
+  \item Make use of cuBLAS GEMM through OpenACC
+  \item When does it start to pay of using cuBLAS?
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Hands-on}{Exercise 6.1 -- 2D diffusion example}
   Source code:
   \begin{itemize}
   \item \shinline{diffusion2d\_omp.\{cpp,f90\}}: our baseline code
@@ -801,29 +947,43 @@ enddo
   \item \shinline{diffusion2d\_openacc.\{cpp,f90\}}
     \begin{itemize}
     \item Single node OpenACC version
-    \end{itemize}
-  \item \shinline{diffusion2d\_openacc\_mpi.\{cpp,f90\}}
-    \begin{itemize}
-    \item MPI+OpenACC version
-    \item If \shinline{OPENACC\_DATA} is undefined, data management is performed by CUDA
+      \item Run as: \shinline{srun --reserv=openacc -Cgpu ./diffusion2d.openacc [ARRAY\_SIZE]}
+        \begin{itemize}
+        \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
+        \end{itemize}
+      \item Fill in the parts where \lstinlineCpp{OPENACC_DATA} is defined.
     \end{itemize}
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Hands-on}{Calling cuBLAS methods}
+\begin{frame}[fragile]{Hands-on}{Exercise 6.2 -- 2D diffusion example using CUDA data management}
   Source code:
   \begin{itemize}
-  \item \shinline{topics/openacc/practicals/gemm/gemm.cpp}
+  \item \shinline{diffusion2d\_openacc.\{cpp,f90\}}
+    \begin{itemize}
+    \item Single node OpenACC version
+      \item Run as: \shinline{srun --reserv=openacc -Cgpu ./diffusion2d.openacc.cuda [ARRAY\_SIZE]}
+        \begin{itemize}
+        \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
+        \end{itemize}
+      \item Fill in the parts where \lstinlineCpp{OPENACC_DATA} is defined.
+    \end{itemize}
   \end{itemize}
-  \vfill
-  Steps:
-  \begin{enumerate}
-  \item Compile with `\shinline{make CPPFLAGS=}' to get also the naive implementation $\rightarrow$ too slow!
-  \item Offload the GEMM method to the GPU using OpenACC
-  \item Make use of cuBLAS GEMM through OpenACC
-  \end{enumerate}
 \end{frame}
 
+\begin{frame}[fragile]{Hands-on}{Exercise 6.3 -- 2D diffusion example using MPI}
+  Source code:
+  \begin{itemize}
+  \item \shinline{diffusion2d\_openacc_mpi.\{cpp,f90\}}
+    \begin{itemize}
+      \item Run as: \shinline{srun --reserv=openacc -Cgpu ./diffusion2d.openacc.cuda [ARRAY\_SIZE]}
+        \begin{itemize}
+        \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
+        \end{itemize}
+      \item Fill in the parts where \lstinlineCpp{OPENACC_DATA} is defined.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
 %% \begin{frame}[fragile]{Outlook}
 %%   OpenACC 2.6 is due end of the year
