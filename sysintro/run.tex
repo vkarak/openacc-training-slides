@@ -1,10 +1,11 @@
 \begin{frame}{Running on Piz Daint}{The job scheduler}
   Piz Daint uses native SLURM for running jobs on the compute nodes.
-  There are two ways of submitting a job:
+  There are three ways of submitting a job:
   \vspace\baselineskip
   \begin{enumerate}
   \item Interactively from the login nodes using the \texttt{srun} command.
   \item By submitting a job script using the \texttt{sbatch} command.
+  \item By pre-allocating resources using the \texttt{salloc} command.
   \end{enumerate}
 \end{frame}
 
@@ -12,9 +13,9 @@
   Necessary and useful options:
   \begin{itemize}
   \item \texttt{-C gpu}: requests allocation on the hybrid (GPU) nodes (required)
-  \item \texttt{--reservation=openacc}: the reservation for our course to avoid waiting times
+  \item \texttt{--reservation=course}: the reservation for our course to avoid waiting times
     \begin{itemize}
-    \item Reservation is valid for the two days of the course from 07:00-19:00.
+    \item Reservation is valid until Jul.\ 27 @ 13:30.
     \end{itemize}
   \item \texttt{-N 2}: number of compute nodes (default is 1)
   \item \texttt{-n 2}: number of MPI tasks (default is 1)
@@ -47,6 +48,13 @@
   {
     \centering
     \includegraphics[width=\textwidth]{sbatch_hostname_output.png}
+  }
+\end{frame}
+
+\begin{frame}[fragile]{Running on Piz Daint}{Using the \texttt{salloc} command}
+  {
+    \centering
+    \includegraphics[width=\textwidth]{salloc_hostname.png}
   }
 \end{frame}
 

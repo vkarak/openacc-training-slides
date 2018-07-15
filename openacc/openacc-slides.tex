@@ -719,7 +719,7 @@ enddo
 \begin{frame}{Hands-on}{Exercise 1 -- AXPY}
   \begin{itemize}
   \item \shinline{practicals/axpy/axpy_openacc.\{cpp,f90\}}
-  \item Run as: \shinline{srun --reserv=openacc -Cgpu ./axpy.openacc [ARRAY\_SIZE]}
+  \item Run as: \shinline{srun --reserv=course -Cgpu ./axpy.openacc [ARRAY\_SIZE]}
     \begin{itemize}
     \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
     \end{itemize}
@@ -730,7 +730,7 @@ enddo
 \begin{frame}{Hands-on}{Exercise 2 -- Dot product}
   \begin{itemize}
   \item \shinline{practicals/basics/dot_openacc.\{cpp,f90\}}
-  \item Run as: \shinline{srun --reserv=openacc -Cgpu ./dot.openacc [ARRAY\_SIZE]}
+  \item Run as: \shinline{srun --reserv=course -Cgpu ./dot.openacc [ARRAY\_SIZE]}
     \begin{itemize}
     \item \shinline{ARRAY\_SIZE} is power of 2, default is 2
     \end{itemize}
@@ -749,7 +749,7 @@ enddo
 \begin{frame}{Hands-on}{Exercise 3 -- 1D blur kernel}
   \begin{itemize}
   \item \shinline{practicals/basics/blur_openacc.\{cpp,f90\}}
-  \item Run as: \shinline{srun --reserv=openacc -Cgpu ./blur.openacc [ARRAY\_SIZE]}
+  \item Run as: \shinline{srun --reserv=course -Cgpu ./blur.openacc [ARRAY\_SIZE]}
     \begin{itemize}
     \item \shinline{ARRAY\_SIZE} is power of 2, default is 20
     \end{itemize}
@@ -998,7 +998,7 @@ int main() {
   \item Compile with `\shinline{make CPPFLAGS=}' to get also the naive implementation $\rightarrow$ too slow!
   \item Offload the GEMM method to the GPU using OpenACC
   \item Make use of cuBLAS GEMM through OpenACC
-  \item When does it start to pay of using cuBLAS?
+  \item When does it start to pay off using cuBLAS?
   \end{enumerate}
 \end{frame}
 

@@ -5,7 +5,7 @@ LATEX_OPTIONS =
 TARGET_EN = sysinfo.pdf
 TARGET = $(TARGET_EN)
 TARGET_BASE = $(basename $(TARGET))
-SOURCES_EN = sysinfo.tex intro.tex ssh.tex compile.tex run.tex vim.tex scp.tex
+SOURCES_EN = sysinfo.tex intro.tex ssh.tex compile.tex run.tex vim.tex scp.tex repo.tex
 INC = $(SOURCES_EN) beamerthemeCSCS.sty
 
 CLEANFILES = $(TARGET_BASE).pdf \
