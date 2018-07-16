@@ -4,7 +4,7 @@
 \graphicspath{{./figs/}}
 
 % define footer text
-\newcommand{\footlinetext}{Directive Based GPU programming course 2018}
+\newcommand{\footlinetext}{CSCS-USI Summer School 2018}
 
 % Select the image for the title page
 \newcommand{\picturetitle}{cscs_images/cscs_entrance_painting.pdf}
@@ -25,8 +25,8 @@
 
 \author{Vasileios Karakasis, CSCS}
 \title{Profiling and Debugging}
-\subtitle{Directive Based GPU programming course 2018}
-\date{May 14--15, 2018}
+\subtitle{CSCS-USI Summer School 2018}
+\date{July 16, 2018}
 
 \begin{document}
 
@@ -45,7 +45,7 @@
 \begin{frame}{Debugging}
   OpenACC translates to CUDA code, so you may use the corresponding tools:
   \begin{itemize}
-  \item \texttt{cuda-memcheck}: Check for memory erros and race conditions
+  \item \texttt{cuda-memcheck}: Check for memory errors and race conditions
   \item \texttt{cuda-gdb}: Debug the generated CUDA kernels
   \item \texttt{nvprof+nvvp}: Detailed performance profiling
   \end{itemize}

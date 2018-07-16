@@ -61,6 +61,8 @@
   \end{itemize}
 \end{frame}
 
+\part{Introduction to OpenACC}
+
 %% \begin{frame}{Overview}
 %%   \begin{itemize}
 %%   \item Day 1 (Understand the basic concepts of OpenACC)
@@ -989,7 +991,7 @@ int main() {
   \item \shinline{practicals/gemm/gemm.cpp}
   \item Run as: \shinline{srun --reserv=openacc -Cgpu ./axpy.openacc [ARRAY\_SIZE]}
     \begin{itemize}
-    \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
+    \item \shinline{ARRAY\_SIZE} is power of 2, default is 8
     \end{itemize}
   \end{itemize}
   \vfill
@@ -998,7 +1000,7 @@ int main() {
   \item Compile with `\shinline{make CPPFLAGS=}' to get also the naive implementation $\rightarrow$ too slow!
   \item Offload the GEMM method to the GPU using OpenACC
   \item Make use of cuBLAS GEMM through OpenACC
-  \item When does it start to pay off using cuBLAS?
+  \item Compare the performance of the different versions
   \end{enumerate}
 \end{frame}
 
@@ -1031,24 +1033,24 @@ int main() {
         \begin{itemize}
         \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
         \end{itemize}
-      \item Fill in the parts where \lstinlineCpp{OPENACC_DATA} is defined.
+      \item Fill in the parts where \lstinlineCpp{OPENACC_DATA} is undefined.
     \end{itemize}
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Hands-on}{Exercise 6.3 -- 2D diffusion example using MPI}
-  Source code:
-  \begin{itemize}
-  \item \shinline{diffusion2d\_openacc_mpi.\{cpp,f90\}}
-    \begin{itemize}
-      \item Run as: \shinline{srun --reserv=openacc -Cgpu ./diffusion2d.openacc.cuda [ARRAY\_SIZE]}
-        \begin{itemize}
-        \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
-        \end{itemize}
-      \item Fill in the parts where \lstinlineCpp{OPENACC_DATA} is defined.
-    \end{itemize}
-  \end{itemize}
-\end{frame}
+%% \begin{frame}[fragile]{Hands-on}{Exercise 6.3 -- 2D diffusion example using MPI}
+%%   Source code:
+%%   \begin{itemize}
+%%   \item \shinline{diffusion2d\_openacc_mpi.\{cpp,f90\}}
+%%     \begin{itemize}
+%%       \item Run as: \shinline{srun --reserv=openacc -Cgpu ./diffusion2d.openacc.cuda [ARRAY\_SIZE]}
+%%         \begin{itemize}
+%%         \item \shinline{ARRAY\_SIZE} is power of 2, default is 16
+%%         \end{itemize}
+%%       \item Fill in the parts where \lstinlineCpp{OPENACC_DATA} is defined.
+%%     \end{itemize}
+%%   \end{itemize}
+%% \end{frame}
 
 \begin{frame}[fragile]{Deep Copy}{The concept}
   \vspace{.5\baselineskip}
@@ -1113,24 +1115,6 @@ for (auto i = 0; i < 3; ++i) {
   \end{itemize}
 \end{frame}
 
-%% \begin{frame}[fragile]{Outlook}
-%%   OpenACC 2.6 is due end of the year
-%%   \begin{itemize}
-%%   \item Manual deep copy
-%%   \item Standardize behavior of Fortran optional arguments
-%%   \item Fortran bindings for all API routines
-%%   \item \lstinlineCpp{acc serial} directive
-%%   \item Device query routines
-%%   \item Improvements in error handling
-%%   \end{itemize}
-%%   OpenACC 3.0
-%%   \begin{itemize}
-%%   \item Not scheduled yet
-%%   \item The big feature should be the true deep copy
-%%   \end{itemize}
-%% \end{frame}
-
-
 \begin{frame}{OpenACC vs.\ OpenMP}
   \begin{itemize}
     \vfill
@@ -1189,54 +1173,77 @@ for (auto i = 0; i < 3; ++i) {
   \end{itemize}
 \end{frame}
 
-%% \part{Porting the miniapp to GPUs using OpenACC}
+\part{Porting the miniapp to GPUs using OpenACC}
 
-%% \begin{frame}[fragile]{General info}
-%%   \begin{itemize}
-%%   \item Fortran 90 version
-%%     \begin{itemize}
-%%     \item \lstinlineCpp{miniapp/openacc/fortran/}
-%%     \end{itemize}
-%%   \item C++11 version
-%%     \begin{itemize}
-%%     \item \lstinlineCpp{miniapp/openacc/cxx/}
-%%     \item Compile with PGI 17.4
-%%       \begin{itemize}
-%%         \item\shinline{module switch PrgEnv-cray PrgEnv-pgi}
-%%         \item\shinline{source <ss-prefix>/scripts/setup.sh}
-%%         \item\shinline{module switch pgi/16.9.0 pgi/17.4}
-%%       \end{itemize}
-%%     \end{itemize}
-%%   \item Interesting files
-%%     \begin{itemize}
-%%     \item\shinline{main.\{cpp,f90\}}: the solver
-%%     \item\shinline{data.\{h,f90\}}: domain types
-%%     \item\shinline{linalg.\{cpp,f90\}}: linear algebra kernels
-%%     \item\shinline{operators.\{cpp,f90\}}: the diffusion kernel
-%%     \end{itemize}
-%%   \end{itemize}
-%% \end{frame}
+\begin{frame}[fragile]{General information}
+  \begin{itemize}
+  \item C++ only
+  \item OpenACC version resides in \shinline{miniapp/openacc}
+  \item MPI+OpenACC version resides in \shinline{miniapp/mpi/openacc}
+  \item Plotting script inside the \shinline{scripts/} folder
+    \begin{itemize}
+    \item Use \shinline{plot.sh} in order not to mess with your environment.
+    \end{itemize}
+  \item Interesting files
+    \begin{itemize}
+    \item\shinline{main.cpp}: the solver
+    \item\shinline{data.h}: domain types
+    \item\shinline{linalg.cpp}: linear algebra kernels
+    \item\shinline{operators.cpp}: the diffusion kernel + communication routines
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
-%% \begin{frame}{Notes for the C++ version}
-%%   \begin{itemize}
-%%   \item There are two C++-isms that complicate things:
-%%     \begin{enumerate}
-%%     \item Domain data is encapsulated inside the \lstinlineCpp{Field} class
-%%       \begin{itemize}
-%%       \item Allocated and initialised inside the constructor
-%%       \item Deallocated inside the destructor
-%%       \end{itemize}
-%%     \item Operators for accessing the domain data
-%%     \end{enumerate}
-%%     \vfill
-%%   \item OpenACC provides the \lstinlineCpp{enter data} and \lstinlineCpp{exit
-%%     data} directives for unscoped data management
-%%   \item Operators are just another kind of functions
-%%     \begin{itemize}
-%%     \item \lstinlineCpp{acc routine} directive is just for that
-%%     \end{itemize}
-%%   \item Remember to copy the object itself (\lstinlineCpp{this} pointer)
-%%   \end{itemize}
-%% \end{frame}
+\begin{frame}{Hints}{Differences to CUDA version}
+  \begin{itemize}
+  \item No need for a separate \texttt{kernels} namespace
+  \item No need for keeping a a copy of the device pointer
+    \begin{itemize}
+    \item OpenACC runtime does just that for you
+    \end{itemize}
+  \item No need for grid and block dimensions calculations
+  \item The calculations for the interior points and the boundaries are moved
+    inside a single function to facilitate porting
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Hints}
+  \begin{itemize}
+  \item There are two C++ abstractions that complicate things:
+    \vfill
+    \begin{enumerate}
+    \item Domain data is encapsulated inside the \lstinlineCpp{Field} class
+      \begin{itemize}
+      \item Allocated and initialized inside the constructor
+      \item Deallocated inside the destructor
+      \end{itemize}
+    \item<2->[Hint:] \emph{OpenACC provides the \lstinlineCpp{enter data} and
+      \lstinlineCpp{exit data} directives for unscoped data management}
+    \vfill
+    \item<3-> Operators for accessing the domain data
+    \item<4->[Hint:] \emph{Operators are just another kind of functions;
+      \lstinlineCpp{acc routine} directive is just for that}
+    \end{enumerate}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Performance tips}
+  \begin{itemize}
+  \item All OpenACC operations are synchronous. Do we really want that?
+    \begin{itemize}
+    \item You may just push your operations to an activity queue (note: cuBLAS is
+      pushing to queue 0), but \dots
+    \item \dots you will need to synchronize sometimes!
+    \end{itemize}
+    \vfill
+  \item Fine tune your parallelism
+    \vfill
+  \item Try dropping the C++ operator abstractions
+    \begin{itemize}
+    \item Code will become ugly (and error-prone), but you may get some bits of
+      performance; judge if it's worth it.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
 \end{document}
