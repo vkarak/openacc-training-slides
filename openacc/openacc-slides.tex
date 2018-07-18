@@ -27,7 +27,7 @@
 \author{\emph{Vasileios Karakasis, CSCS}}
 \title{GPU programming using OpenACC}
 \subtitle{CSCS-USI Summer School 2018}
-\date{July 18--19, 2018}
+\date{July 19--20, 2018}
 
 \begin{document}
 
@@ -42,7 +42,6 @@
       \begin{itemize}
       \item Execution and memory model
       \item Basic directives
-      \item Profiling and debugging
       \item Hands-on sessions
       \end{itemize}
     \item Advanced topics
@@ -99,7 +98,7 @@
   \begin{itemize}
   \item I don't care about all the little hardware details, I want my science done.
   \item I want to run on accelerators, but I still need a fast and readable code.
-  \item I need portability across different accelerator vendors, but also be able to run on the multicore.
+  \item I need portability across different accelerator vendors, but also to be able to run on the multicore.
   \item I inhereted a large legacy monolithic codebase, which I don't dare to
     refactor completely, but I need to get my results faster.
   \item My code is in Fortran.
@@ -172,7 +171,7 @@
     \begin{itemize}
     \item Multiple loops to be executed as multiple kernels
     \end{itemize}
-  \item Levels of parallelim
+  \item Levels of parallelism
     \begin{enumerate}
     \item \emph{Gang} \onslide<2->{\emph{$\rightarrow$ CUDA block}}
     \item \emph{Worker} \onslide<2->{\emph{$\rightarrow$ CUDA warp}}
@@ -558,8 +557,9 @@ enddo
 \end{frame}
 
 \begin{frame}[fragile]{Memory model}{Array ranges}
-  Data clauses may accept as arguments
+  Data clauses may accept as arguments:
   \begin{itemize}
+    \vfill
   \item Whole arrays
     \begin{itemize}
     \item C/C++: You \emph{must} specify bounds for dynamically allocated arrays
@@ -572,6 +572,7 @@ enddo
       \item \lstinlineFortran{\!\$acc data copyin(a)}
       \end{itemize}
     \end{itemize}
+    \vfill
   \item Array subranges
     \begin{itemize}
     \item \lstinlineCpp{\#pragma acc data copyin(a[2:n-2])}
@@ -709,7 +710,6 @@ enddo
     \begin{itemize}
     \item Suggest using PGI for the advanced examples
     \end{itemize}
-  \item \shinline{source <repodir>/scripts/setup_pgi.sh} $\rightarrow$ will make available PGI 18.4
   \item \shinline{module load craype-accel-nvidia60} for loading CUDA and set the target architecture to the GPU
   \item \shinline{make}
     \begin{itemize}
@@ -838,15 +838,15 @@ for (auto p = 0; p < n; ++p) {
 \begin{frame}{Interoperability with CUDA}
   \large
   \begin{itemize}
-  \item Can I use a CUDA pointer inside OpenACC context?
+  \item Can I use a CUDA pointer inside OpenACC device context?
     \vspace\baselineskip
-  \item Can I call a CUDA function from OpenACC context?
+  \item Can I call a CUDA function from OpenACC host context?
   \end{itemize}
   \vfill
   Short answer is \emph{yes}.
 \end{frame}
 
-\begin{frame}{Interoperability with CUDA}{Use CUDA pointers inside OpenACC context}
+\begin{frame}{Interoperability with CUDA}{Use CUDA pointers inside OpenACC device context}
   A scenario:
   \begin{itemize}
   \item Have a CUDA code that needs to call a function that uses OpenACC.
@@ -859,7 +859,7 @@ for (auto p = 0; p < n; ++p) {
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Interoperability with CUDA}{Use CUDA pointers inside OpenACC context}
+\begin{frame}{Interoperability with CUDA}{Use CUDA pointers inside OpenACC device context}
   Solution:
   \vspace\baselineskip
   \begin{itemize}
@@ -870,7 +870,7 @@ for (auto p = 0; p < n; ++p) {
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Interoperability with CUDA}{Use CUDA pointers inside OpenACC context -- Example}
+\begin{frame}[fragile]{Interoperability with CUDA}{Use CUDA pointers inside OpenACC device context -- Example}
   \begin{lstlisting}[style=CppStyle]
 void copy(double *dst, const double *src, size_t n) {
   #pragma acc parallel loop deviceptr(dst, src)
@@ -890,7 +890,7 @@ int main() {
   \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]{Interoperability with CUDA}{Call a CUDA function from OpenACC context}
+\begin{frame}[fragile]{Interoperability with CUDA}{Call a CUDA function from OpenACC host context}
   Scenario:
   \begin{itemize}
   \item My code is in OpenACC, but I need to call an optimized library written in CUDA, which accepts device pointers, e.g., cuBLAS.
@@ -1202,8 +1202,8 @@ for (auto i = 0; i < 3; ++i) {
     \item OpenACC runtime does just that for you
     \end{itemize}
   \item No need for grid and block dimensions calculations
-  \item The calculations for the interior points and the boundaries are moved
-    inside a single function to facilitate porting
+  \item The calculations for the interior points and the boundaries are based
+    on the serial version
   \end{itemize}
 \end{frame}
 
