@@ -22,10 +22,26 @@ figs = \
 	cscs_images/cscs_external.eps \
 	cscs_images/cscs_entrance_equations.eps
 
+png = \
+	figs/module_list.png \
+	figs/module_switch.png \
+	figs/module_switch_cray.png \
+	figs/module_load_unload.png \
+	figs/module_avail_all.png \
+	figs/module_avail_gcc.png \
+	figs/module_show_gcc.png \
+	figs/module_help_cp2k.png \
+	figs/srun_hostname.png \
+	figs/sbatch_hostname.png \
+	figs/sbatch_hostname_output.png \
+	figs/salloc_hostname.png \
+	figs/scontrol.png
+
+
 all: $(TARGET)
 clean: clean-files clean-figs
 
-$(TARGET): $(figs) $(TARGET_BASE).tex $(INC)
+$(TARGET): $(figs) $(TARGET_BASE).tex $(INC) $(png)
 	outfile=`mktemp .tex.XXXXXX`; \
 	echo 'Rerun' > $$outfile; \
 	until ! grep 'Rerun' $$outfile; do \
