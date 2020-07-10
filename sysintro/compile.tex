@@ -5,7 +5,7 @@
   \item 4 predefined Programming Environments:
     \begin{itemize}
     \item PrgEnv-\texttt{cray} (default), \texttt{PrgEnv-gnu}, \texttt{PrgEnv-intel}, \texttt{PrgEnv-pgi}
-    \item \shinline{echo $PE_ENV} to get the current PrgEnv
+    \item \consinline{echo $PE_ENV} to get the current PrgEnv
     \end{itemize}
   \item 3 wrappers available: \texttt{ftn} (Fortran), \texttt{cc} (C), \texttt{CC} (C++)
     \begin{itemize}
@@ -30,82 +30,140 @@
 \end{frame}
 
 
-\begin{frame}{Managing programming environments}{Listing modules}
-  \begin{itemize}
-  \item[--] \shinline{module list}
-  \end{itemize}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{module_list.png}
-  }
+\begin{frame}[fragile]{Managing programming environments}{Listing modules}
+  \begin{lstlisting}[style=console]
+$ module list
+Currently Loaded Modulefiles:
+  1) modules/3.2.11.3                                12) job/2.2.4-7.0.1.1_3.8__g36b56f4.ari
+  2) cce/9.0.2                                       13) dvs/2.12_2.2.151-7.0.1.1_5.6__g7eb5e703
+  3) craype-network-aries                            14) alps/6.6.56-7.0.1.1_4.10__g2e60a7e4.ari
+  4) craype/2.6.1                                    15) rca/2.2.20-7.0.1.1_4.9__g8e3fb5b.ari
+  5) cray-libsci/19.06.1                             16) atp/2.1.3
+  6) udreg/2.3.2-7.0.1.1_3.9__g8175d3d.ari           17) perftools-base/7.1.1
+  7) ugni/6.0.14.0-7.0.1.1_7.10__ge78e5b0.ari        18) PrgEnv-cray/6.0.5
+  8) pmi/5.0.14                                      19) cray-mpich/7.7.10
+  9) dmapp/7.1.1-7.0.1.1_4.8__g38cf134.ari           20) slurm/20.02.2-1
+ 10) gni-headers/5.0.12.0-7.0.1.1_6.7__g3b1768f.ari  21) craype-haswell
+ 11) xpmem/2.2.19-7.0.1.1_3.7__gdcf436c.ari          22) xalt/2.7.24
+  \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Managing programming environments}{Switching programming environments}
-  \begin{itemize}
-  \item[--] Switch to the PGI programming environment
-  \item[--] \shinline{module switch}
-  \end{itemize}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{module_switch.png}
-  }
+\begin{frame}[fragile]{Managing programming environments}{Switching programming environments}
+  \begin{lstlisting}[style=console]
+$ module switch PrgEnv-cray/6.0.5 PrgEnv-pgi
+$ module list
+Currently Loaded Modulefiles:
+  1) modules/3.2.11.3                                12) dmapp/7.1.1-7.0.1.1_4.8__g38cf134.ari
+  2) pgi/19.7.0                                      13) gni-headers/5.0.12.0-7.0.1.1_6.7__g3b1768f.ari
+  3) craype-haswell                                  14) xpmem/2.2.19-7.0.1.1_3.7__gdcf436c.ari
+  4) craype-network-aries                            15) job/2.2.4-7.0.1.1_3.8__g36b56f4.ari
+  5) craype/2.6.1                                    16) dvs/2.12_2.2.151-7.0.1.1_5.6__g7eb5e703
+  6) cray-mpich/7.7.10                               17) alps/6.6.56-7.0.1.1_4.10__g2e60a7e4.ari
+  7) slurm/20.02.2-1                                 18) rca/2.2.20-7.0.1.1_4.9__g8e3fb5b.ari
+  8) xalt/2.7.24                                     19) atp/2.1.3
+  9) udreg/2.3.2-7.0.1.1_3.9__g8175d3d.ari           20) perftools-base/7.1.1
+ 10) ugni/6.0.14.0-7.0.1.1_7.10__ge78e5b0.ari        21) PrgEnv-pgi/6.0.5
+ 11) pmi/5.0.14
+  \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Managing programming environments}{Switching back to the Cray programming environment}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{module_switch_cray.png}
-  }
+\begin{frame}[fragile]{Managing programming environments}{Switching back to the Cray programming environment}
+  \begin{lstlisting}[style=console]
+$ module switch PrgEnv-pgi/6.0.5 PrgEnv-cray
+$ module list
+Currently Loaded Modulefiles:
+  1) modules/3.2.11.3                                12) pmi/5.0.14
+  2) slurm/20.02.2-1                                 13) dmapp/7.1.1-7.0.1.1_4.8__g38cf134.ari
+  3) xalt/2.7.24                                     14) gni-headers/5.0.12.0-7.0.1.1_6.7__g3b1768f.ari
+  4) cce/9.0.2                                       15) xpmem/2.2.19-7.0.1.1_3.7__gdcf436c.ari
+  5) craype-haswell                                  16) job/2.2.4-7.0.1.1_3.8__g36b56f4.ari
+  6) craype-network-aries                            17) dvs/2.12_2.2.151-7.0.1.1_5.6__g7eb5e703
+  7) craype/2.6.1                                    18) alps/6.6.56-7.0.1.1_4.10__g2e60a7e4.ari
+  8) cray-mpich/7.7.10                               19) rca/2.2.20-7.0.1.1_4.9__g8e3fb5b.ari
+  9) cray-libsci/19.06.1                             20) atp/2.1.3
+ 10) udreg/2.3.2-7.0.1.1_3.9__g8175d3d.ari           21) perftools-base/7.1.1
+ 11) ugni/6.0.14.0-7.0.1.1_7.10__ge78e5b0.ari        22) PrgEnv-cray/6.0.5
+  \end{lstlisting}
 \end{frame}
 
-\begin{frame}{Managing programming environments}{Loading and unloading modules}
-  \begin{itemize}
-  \item[--] \shinline{module load [MODULE_NAME]}
-  \item[--] \shinline{module unload [MODULE_NAME]}
-  \end{itemize}
-
-  {
-    \centering
-    \includegraphics[width=\textwidth]{module_load_unload.png}
-  }
-\end{frame}
-
-
-\begin{frame}{Managing programming environments}{Checking available modules}
-  \begin{itemize}
-  \item[--] The \texttt{daint-gpu} makes available the CSCS software stack built for the hybrid nodes of the system
-  \end{itemize}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{module_avail_all.png}
-  }
-\end{frame}
-
-\begin{frame}{Managing programming environments}{Checking available modules}
-  \begin{itemize}
-  \item Check available versions of a software
-  \end{itemize}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{module_avail_gcc.png}
-  }
-\end{frame}
-
-\begin{frame}{Managing programming environments}{Get information about a module}
-  \begin{itemize}
-  \item[--] Environment variables set, paths etc.
-  \end{itemize}
-
-  {
-    \centering
-    \includegraphics[width=\textwidth]{module_show_gcc.png}
-  }
+\begin{frame}[fragile]{Managing programming environments}{Loading and unloading modules}
+  \begin{lstlisting}[style=console]
+$ module load cray-hdf5
+$ which h5dump
+/opt/cray/pe/hdf5/1.10.5.1/bin/h5dump
+$ module unload cray-hdf5
+$ which h5dump
+which: no h5dump in (/opt/cray/pe/perftools/7.1.1/bin:/opt/cray/pe/papi/5.7.0.2/bin:/opt/cray/rca/2.2.20-7.0.1.1_4.9__g8e3fb5b.ari/bin:/opt/cray/alps/6.6.56-7.0.1.1_4.10__g2e60a7e4.ari/sbin:/opt/cray/alps/default/bin:/opt/cray/job/2.2.4-7.0.1.1_3.8__g36b56f4.ari/bin:/opt/cray/pe/mpt/7.7.10/gni/bin:/opt/cray/pe/craype/2.6.1/bin:/opt/cray/pe/cce/9.0.2/cce-clang/x86_64/bin:/opt/cray/pe/cce/9.0.2/binutils/x86_64/x86_64-pc-linux-gnu/bin:/opt/cray/pe/cce/9.0.2/binutils/cross/x86_64-aarch64/aarch64-linux-gnu/../bin:/opt/cray/pe/cce/9.0.2/utils/x86_64/bin:/users/karakasv/local/bin:/users/karakasv/local/sbin:/apps/daint/UES/xalt/xalt2/software/xalt/2.7.24/sbin:/apps/daint/UES/xalt/xalt2/software/xalt/2.7.24/bin:/opt/cray/pe/modules/3.2.11.3/bin:/apps/daint/system/bin:/apps/common/system/bin:/usr/local/bin:/usr/bin:/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin:/opt/cray/pe/bin)
+$ h5dump
+If 'h5dump' is not a typo you can use command-not-found to lookup the package that contains it, like this:
+    cnf h5dump
+  \end{lstlisting}
 \end{frame}
 
 
-\begin{frame}{Managing programming environments}{Get help for a module}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{module_help_cp2k.png}
-  }
+\begin{frame}[fragile]{Managing programming environments}{Checking available modules}
+  \begin{lstlisting}[style=console]
+$ module avail gcc
+
+--------------------------------------- /opt/modulefiles ----------------------------------------
+gcc/6.1.0          gcc/7.3.0          gcc/8.1.0          gcc/8.2.0          gcc/8.3.0(default)
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Managing programming environments}{Loading the CSCS software stack}
+  \begin{lstlisting}[style=console]
+$ module load daint-gpu
+$ module avail TensorFlow
+
+---------------- /apps/daint/UES/jenkins/7.0.UP01/gpu/easybuild/modules/all -----------------
+TensorFlow/1.14.0-CrayGNU-19.10-cuda-10.1.168-python3
+TensorFlow/2.0.0-CrayGNU-19.10-cuda-10.1.168
+TensorFlow/2.2.0-CrayGNU-19.10-cuda-10.1.168
+
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Managing programming environments}{Get information about a module}
+  \begin{lstlisting}[style=console]
+$ module show gcc
+-------------------------------------------------------------------
+/opt/modulefiles/gcc/8.3.0:
+
+conflict	 gcc
+conflict	 gcc-cross-aarch64
+prepend-path	 PATH /opt/gcc/8.3.0/bin
+prepend-path	 MANPATH /opt/gcc/8.3.0/snos/share/man
+prepend-path	 INFOPATH /opt/gcc/8.3.0/snos/share/info
+prepend-path	 LD_LIBRARY_PATH /opt/gcc/8.3.0/snos/lib64
+setenv		 GCC_PATH /opt/gcc/8.3.0
+setenv		 GCC_VERSION 8.3.0
+setenv		 GNU_VERSION 8.3.0
+-------------------------------------------------------------------
+  \end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Managing programming environments}{Get help for a module}
+  \begin{lstlisting}[style=console]
+$ module help TensorFlow
+
+----------- Module Specific Help for 'TensorFlow/2.2.0-CrayGNU-19.10-cuda-10.1.168' ---------------------------
+
+
+
+Description
+===========
+An open-source software library for Machine Intelligence.
+
+
+More information
+================
+ - Homepage: https://www.tensorflow.org/
+
+
+Included extensions
+===================
+grpcio-1.24.0, tensorboard-2.2.1, tensorflow-estimator-2.2.0
+  \end{lstlisting}
 \end{frame}

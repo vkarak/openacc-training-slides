@@ -2,15 +2,16 @@
   \begin{itemize}
   \item \texttt{scp}: Remote copy over SSH
     \begin{itemize}
-    \item Getting a file: \shinline{scp studXX@ela.cscs.ch:remotefile localfile}
-    \item Getting a directory: \shinline{scp -r studXX@ela.cscs.ch:remotedir localdir}
-    \item Sending a file: \shinline{scp localfile studXX@ela.cscs.ch:remotefile}
-    \item Sending a directory: \shinline{scp localdir studXX@ela.cscs.ch:remotedir}
+    \item Getting a file: \shinline{scp classXXX@ela.cscs.ch:remotefile localfile}
+    \item Getting a directory: \shinline{scp -r classXXX@ela.cscs.ch:remotedir localdir}
+    \item Sending a file: \shinline{scp localfile classXXX@ela.cscs.ch:remotefile}
+    \item Sending a directory: \shinline{scp localdir classXXX@ela.cscs.ch:remotedir}
+    \item NOTE: The \consinline{$SCRATCH} filesystem is not mounted in the frontend nodes
     \end{itemize}
   \item \texttt{rsync}: Synchronize files remotely over SSH
     \begin{itemize}
-    \item \shinline{rsync -avz studXX@ela.cscs.ch:remotedir/ localdir/}
-    \item \shinline{rsync -avz localdir/ studXX@ela.cscs.ch:remotedir/}
+    \item \shinline{rsync -avz classXXX@ela.cscs.ch:remotedir/ localdir/}
+    \item \shinline{rsync -avz localdir/ classXXX@ela.cscs.ch:remotedir/}
     \item Pay attention to the slashes! \shinline{rsync} \emph{behaves differently
       with or without slashes.}
     \end{itemize}

@@ -1,24 +1,34 @@
 \documentclass[12pt,aspectratio=169]{beamer}
+\usepackage{pifont}
 
 \usetheme{CSCS}
 
 \graphicspath{{./figs/}}
 
 % define footer text
-\newcommand{\footlinetext}{CSCS-USI Summer School 2019}
+\newcommand{\footlinetext}{CSCS-USI Summer School 2020}
 
 % Select the image for the title page
 \newcommand{\picturetitle}{cscs_images/cscs_entrance_painting.pdf}
 
 \lstdefinestyle{shstyle}{
-  basicstyle=\scriptsize\ttfamily,
+  basicstyle=\tiny\ttfamily,
   keywordstyle=\color{blue},
   stringstyle=\color{magenta},
   commentstyle=\itshape\color{cscsred},
   language=bash,
+  breaklines=true,
+  postbreak=\mbox{\ding{229}}
+}
+
+\lstdefinestyle{console}{
+  basicstyle=\tiny\ttfamily,
+  breaklines=true,
+  postbreak=\mbox{\ding{229}}
 }
 
 \newcommand\shinline[2][]{\lstinline[style=shstyle,basicstyle=\ttfamily,#1]!#2!}
+\newcommand\consinline[2][]{\lstinline[style=console,basicstyle=\ttfamily,#1]!#2!}
 
 % Please use the predifined colors:
 % cscsred, cscsgrey, cscsgreen, cscsblue, cscsbrown, cscspurple, cscsyellow,
@@ -26,8 +36,8 @@
 
 \author{\emph{Vasileios Karakasis, CSCS}}
 \title{Introduction to the Piz Daint environment}
-\subtitle{CSCS-USI Summer School 2019}
-\date{July 15, 2019}
+\subtitle{CSCS-USI Summer School 2020}
+\date{July 13, 2020}
 
 
 \begin{document}

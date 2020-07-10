@@ -15,7 +15,7 @@
   \item \texttt{-C gpu}: requests allocation on the hybrid (GPU) nodes (required)
   \item \texttt{--reservation=summer\_school}
     \begin{itemize}
-    \item 64 nodes valid until Jul.\ 25 @ 13:00.
+    \item 210 nodes valid until July 24 @ 20:30.
     \end{itemize}
   \item \texttt{-N 2}: number of compute nodes (default is 1)
   \item \texttt{-n 2}: number of MPI tasks (default is 1)
@@ -30,32 +30,64 @@
 \end{frame}
 
 \begin{frame}[fragile]{Running on Piz Daint}{Using the \texttt{srun} command}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{srun_hostname.png}
-  }
+  \begin{lstlisting}[style=console,basicstyle=\ttfamily\scriptsize]
+$ srun --reservation=summer_school -Cgpu -t1 -N2 hostname
+srun: job 24097869 queued and waiting for resources
+srun: job 24097869 has been allocated resources
+nid01994
+nid01995
+  \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Running on Piz Daint}{Using the \texttt{sbatch} command}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{sbatch_hostname.png}
-  }
+  \begin{lstlisting}[style=console]
+$ cat > job.sh
+#!/bin/bash
+#SBATCH -J 'my_first_job'
+#SBATCH -C gpu
+#SBATCH -N 2
+#SBATCH --reservation=summer_school
+#SBATCH -o myjob.out
+#SBATCH -e myjob.err
+
+echo "My job id is $SLURM_JOB_ID"
+srun hostname
+^D
+$ sbatch job.sh
+Submitted batch job 24101970
+$ squeue -j 24101970
+   JOBID     USER ACCOUNT           NAME  ST REASON    START_TIME           TIME  TIME_LEFT NODES CPUS
+24101970 karakasv csstaff   my_first_job  PD Priority  N/A                  0:00       1:00     2    2
+$ squeue -j 24101970
+   JOBID     USER ACCOUNT           NAME  ST REASON    START_TIME           TIME  TIME_LEFT NODES CPUS
+24101970 karakasv csstaff   my_first_job   R None      18:14:26             0:21       0:39     2   48
+$ cat myjob.err
+$ cat myjob.out
+My job id is 24101970
+nid01985
+nid01986
+  \end{lstlisting}
 \end{frame}
 
-
-\begin{frame}[fragile]{Running on Piz Daint}{Using the \texttt{sbatch} command -- Examinining the output}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{sbatch_hostname_output.png}
-  }
-\end{frame}
 
 \begin{frame}[fragile]{Running on Piz Daint}{Using the \texttt{salloc} command}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{salloc_hostname.png}
-  }
+  \begin{lstlisting}[style=console]
+$ salloc -Cgpu -t1 -N2
+salloc: Pending job allocation 24102049
+salloc: job 24102049 queued and waiting for resources
+salloc: job 24102049 has been allocated resources
+salloc: Granted job allocation 24102049
+$ srun -N2 hostname
+nid01986
+nid01985
+$ srun -N1 hostname
+nid01985
+$ srun -N4 hostname
+srun: error: Only allocated 2 nodes asked for 4
+$ exit
+salloc: Relinquishing job allocation 24102049
+salloc: Job allocation 24102049 has been revoked.
+  \end{lstlisting}
 \end{frame}
 
 \begin{frame}{Running on Piz Daint}{Other useful commands}
@@ -70,9 +102,27 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Running on Piz Daint}{Other useful commands}
-  {
-    \centering
-    \includegraphics[width=\textwidth]{scontrol.png}
-  }
+\begin{frame}[fragile]{Running on Piz Daint}{Other useful commands}
+  \begin{lstlisting}[style=console]
+$ scontrol show reservation summer_school
+ReservationName=summer_school StartTime=Mon 08:30 EndTime=Mon 20:30 Duration=12:00:00
+   Nodes=nid0[3860-3887,3892-4073] NodeCnt=210 CoreCnt=2520 Features=(null) PartitionName=(null) Flags=WEEKDAY,SPEC_NODES
+   TRES=cpu=5040
+   Users=(null) Accounts=class02,class03,class04,csstaff Licenses=(null) State=INACTIVE BurstBuffer=(null) Watts=n/a
+   MaxStartDelay=(null)
+
+[18:22:47] karakasv@daint106 [~]
+$ scontrol show partition normal
+PartitionName=normal
+   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL
+   AllocNodes=ALL Default=YES QoS=N/A
+   DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO GraceTime=0 Hidden=NO
+   MaxNodes=2400 MaxTime=1-00:00:00 MinNodes=1 LLN=NO MaxCPUsPerNode=UNLIMITED
+   Nodes=nid0[0004-0007,0012-0024,0026-0062,0064-0067,0072-0126,0128-0190,0192-0195,0200-0254,0260-0318,0320-0323,0328-0382,0388-0446,0456-0510,0516-0574,0576-0579,0584-0638,0644-0702,0704-0707,0712-0766,0772-0830,0840-0894,0900-0958,0960-0963,0968-1022,1028-1086,1088-1150,1152-1192,1198-1214,1216-1278,1280-1633,1928-1935,1940-1967,1972-2319,2324-2351,2360-2703,2708-2735,2740-3087,3092-3119,3124-3471,3476-3503,3512-3855,3860-3887,3892-4239,4244-4271,4284-7679]
+   PriorityJobFactor=10 PriorityTier=20 RootOnly=NO ReqResv=NO OverSubscribe=EXCLUSIVE
+   OverTimeLimit=NONE PreemptMode=OFF
+   State=UP TotalCPUs=246720 TotalNodes=7212 SelectTypeParameters=NONE
+   JobDefaults=(null)
+   DefMemPerNode=UNLIMITED MaxMemPerNode=UNLIMITED
+  \end{lstlisting}
 \end{frame}

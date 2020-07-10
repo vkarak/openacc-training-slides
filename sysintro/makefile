@@ -14,34 +14,17 @@ CLEANFILES = $(TARGET_BASE).pdf \
 
 RM = /bin/rm -f
 figs = \
-	cscs_images/eth_logo.eps \
-	cscs_images/cscs_logo.eps \
-	cscs_images/cscs_entrance_painting.eps \
-	cscs_images/cscs_logo_fullname.eps \
-	cscs_images/cscs_machine_room.eps \
-	cscs_images/cscs_external.eps \
-	cscs_images/cscs_entrance_equations.eps
-
-png = \
-	figs/module_list.png \
-	figs/module_switch.png \
-	figs/module_switch_cray.png \
-	figs/module_load_unload.png \
-	figs/module_avail_all.png \
-	figs/module_avail_gcc.png \
-	figs/module_show_gcc.png \
-	figs/module_help_cp2k.png \
-	figs/srun_hostname.png \
-	figs/sbatch_hostname.png \
-	figs/sbatch_hostname_output.png \
-	figs/salloc_hostname.png \
-	figs/scontrol.png
-
+	cscs_images/eth_logo.pdf \
+	cscs_images/cscs_logo.pdf \
+	cscs_images/cscs_entrance_painting.pdf \
+	cscs_images/cscs_logo_fullname.pdf \
+	cscs_images/cscs_machine_room.pdf \
+	cscs_images/cscs_external.pdf \
+	cscs_images/cscs_entrance_equations.pdf
 
 all: $(TARGET)
-clean: clean-files clean-figs
 
-$(TARGET): $(figs) $(TARGET_BASE).tex $(INC) $(png)
+$(TARGET): $(figs) $(TARGET_BASE).tex $(INC)
 	outfile=`mktemp .tex.XXXXXX`; \
 	echo 'Rerun' > $$outfile; \
 	until ! grep 'Rerun' $$outfile; do \
@@ -58,13 +41,5 @@ $(TARGET_BASE).bbl: $(TARGET_BASE).bib
 	done; \
 	$(RM) $$outfile
 
-# Some latex installations need the eps files as well
-%.eps: %.pdf
-	@echo Converting $< to $@ ...; \
-	pdftops -eps $<
-
-clean-files:
+clean:
 	$(RM) $(CLEANFILES)
-
-clean-figs:
-	$(RM) $(figs)
